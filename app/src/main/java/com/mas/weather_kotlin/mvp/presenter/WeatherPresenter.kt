@@ -5,11 +5,14 @@ import com.github.terrakok.cicerone.Router
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.mvp.model.Tools
 import com.mas.weather_kotlin.mvp.model.entity.current.CurrentRestModel
+import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.model.entity.hourly.HourlyRestModel
 import com.mas.weather_kotlin.mvp.navigation.IScreens
+import com.mas.weather_kotlin.mvp.presenter.list.IDailyListPresenter
 import com.mas.weather_kotlin.mvp.presenter.list.IHourlyListPresenter
 import com.mas.weather_kotlin.mvp.repo.IOpenWeather
 import com.mas.weather_kotlin.mvp.view.WeatherView
+import com.mas.weather_kotlin.mvp.view.list.IDailyItemView
 import com.mas.weather_kotlin.mvp.view.list.IHourItemView
 import com.mas.weather_kotlin.ui.App
 import io.reactivex.rxjava3.core.Scheduler
@@ -35,30 +38,43 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     lateinit var uiScheduler: Scheduler
 
 
-//    class UsersListPresenter : IUsersListPresenter {
-//        val users = mutableListOf<GithubUser>()
-//       // override var itemClickListener: ((IUserItemView) -> Unit)? = null
-//
-//        override fun bindView(view: IUserItemView) {
-//            val user = users[view.pos]
-//            view.setLogin(user.login)
-//            view.loadAvatar(user.avatarUrl)
-//        }
-//
-//        override fun getCountDaily() = weather.daily?.size.let { 0 }
-//    }
+    class DailyListPresenter : IDailyListPresenter {
+        val dailyWeather = mutableListOf<DailyRestModel>()
+        var timeZone = 0L
+        override var itemClickListener: ((IDailyItemView) -> Unit)? = null
 
-//    class DailyListPresenter : IDailyListPresenter {
-//        val dailyWeather = mutableListOf<DailyRestModel>()
-//        // override var itemClickListener: ((IUserItemView) -> Unit)? = null
-//
-//        override fun bindView(view: IDailyItemView) {
-//            val day = dailyWeather[view.pos]
-//            view.setTemp(day.temp.toString())
-//        }
-//
-//        override fun getCountDaily() = dailyWeather.size.let { 0 }
-//    }
+        override fun bindView(view: IDailyItemView) {
+            val day = dailyWeather[view.pos]
+            val time = Tools().decodeTime(Tools().PATTERN_EEE_D_MMM, day.dt, timeZone)
+            var maxT = ""
+            var minT = ""
+            var humidity = ""
+            var pressure = ""
+            var rain = ""
+            with(App.instance.resources) {
+                if (day.temp != null) {
+                    maxT = getString(R.string.wi_direction_up) + " %.1f\u00b0C".format(Math.round(day.temp.max * 10) / 10f)
+                    minT = getString(R.string.wi_direction_down) + " %.1f\u00b0C".format(Math.round(day.temp.min * 10) / 10f)
+                }
+                humidity = "${getString(R.string.wi_humidity)} ${day.humidity} %"
+                pressure = "${getString(R.string.wi_barometer)} ${Math.round(day.pressure / 1.333)} mm Hg"
+                rain = "${getString(R.string.wi_umbrella)} %.2f mm/h".format(day.rain)
+
+            }
+
+            view.setDay(time)
+            view.setTempMax(maxT)
+            view.setTempMin(minT)
+            view.setDailyHumidity(humidity)
+            view.setDailyPressure(pressure)
+            view.setDailyRain(rain)
+            val weatherIcoUrl =
+                "https://openweathermap.org/img/wn/%s@2x.png".format(day.weather?.get(0)?.icon)
+            view.loadWeatherIco(weatherIcoUrl)
+        }
+
+        override fun getCount() = dailyWeather.size
+    }
 
     class HourlyListPresenter : IHourlyListPresenter {
         val hourlyWeather = mutableListOf<HourlyRestModel>()
@@ -76,7 +92,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             val rain = if (hour.rain != null) hour.rain.rain.toString() else ""
             view.setRainfall(rain)
 
-            view.setTemp((Math.round(hour.temp*10)/10f).toString())
+            view.setTemp((Math.round(hour.temp * 10) / 10f).toString())
 
             val weatherIcoUrl =
                 "https://openweathermap.org/img/wn/%s@2x.png".format(hour.weather?.get(0)?.icon)
@@ -88,6 +104,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
     var currentWeather = CurrentRestModel()
     var hourlyListPresenter = HourlyListPresenter()
+    var dailyListPresenter = DailyListPresenter()
     var timeZone = 0L
 
     override fun onFirstViewAttach() {
@@ -120,6 +137,12 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                             hourlyListPresenter.timeZone = timeZone
                             viewState.updateHourlyList()
                         }
+                        if (weather.daily != null) {
+                            dailyListPresenter.dailyWeather.clear()
+                            dailyListPresenter.dailyWeather.addAll(weather.daily)
+                            dailyListPresenter.timeZone = timeZone
+                            viewState.updateDailyList()
+                        }
                     }
                     Log.d("my", "weather")
                 },
@@ -137,7 +160,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         var update: String
         var weatherIcoUrl: String
         with(App.instance.resources) {
-            temp = "${getString(R.string.wi_thermometer)} %s \u00b0C".format(Math.round(currentWeather.temp*10)/10f)
+            temp =
+                "${getString(R.string.wi_thermometer)} %s \u00b0C".format(Math.round(currentWeather.temp * 10) / 10f)
             hum = "${getString(R.string.wi_humidity)} ${currentWeather.humidity} %"
             press =
                 "${getString(R.string.wi_barometer)} ${Math.round(currentWeather.pressure / 1.333)} mm Hg"

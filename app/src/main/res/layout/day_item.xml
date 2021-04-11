@@ -1,0 +1,77 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dayLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="horizontal">
+
+    <GridLayout
+        android:layout_height="match_parent"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_day"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="text" />
+    </GridLayout>
+
+    <GridLayout
+        android:layout_height="match_parent"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_dayImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+    </GridLayout>
+
+    <GridLayout
+        android:layout_height="match_parent"
+        android:layout_columnWeight="1"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/tv_tempMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text" />
+
+        <TextView
+            android:id="@+id/tv_tempMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text" />
+
+    </GridLayout>
+
+    <GridLayout
+        android:layout_columnWeight="1"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/tv_dailyPressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text" />
+
+        <TextView
+            android:id="@+id/tv_dailyHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text" />
+
+        <TextView
+            android:id="@+id/tv_dailyRain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="text" />
+    </GridLayout>
+
+</GridLayout>

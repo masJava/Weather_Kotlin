@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mas.weather_kotlin.databinding.FragmentUsersBinding
 import com.mas.weather_kotlin.mvp.presenter.WeatherPresenter
 import com.mas.weather_kotlin.mvp.view.WeatherView
 import com.mas.weather_kotlin.ui.App
 import com.mas.weather_kotlin.ui.BackButtonListener
+import com.mas.weather_kotlin.ui.adapter.DailyRVAdapter
 import com.mas.weather_kotlin.ui.adapter.HourlyRVAdapter
 import com.mas.weather_kotlin.ui.adapter.UsersRVAdapter
 import com.mas.weather_kotlin.ui.image.GlideImageLoader
@@ -37,7 +39,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
             vb = it
         }.root
 
-        var weatherFont = Typeface.createFromAsset(resources.assets, "fonts/weather.ttf")
+        val weatherFont = Typeface.createFromAsset(resources.assets, "fonts/weather.ttf")
 
         vb?.mainTemp?.typeface = weatherFont
         vb?.mainHum?.typeface = weatherFont
@@ -58,11 +60,16 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         //подключение адаптеров списков
         vb?.rvHourly?.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
         vb?.rvHourly?.adapter = HourlyRVAdapter(presenter.hourlyListPresenter, GlideImageLoader())
+        vb?.rvHourly?.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.HORIZONTAL))
+
+        vb?.rvDaily?.layoutManager = LinearLayoutManager(requireContext())
+        vb?.rvDaily?.adapter = DailyRVAdapter(presenter.dailyListPresenter, GlideImageLoader())
+        vb?.rvDaily?.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
     }
 
     override fun updateDailyList() {
         //обновление адаптеров списков
-//        vb?.rvUsers?.adapter?.notifyDataSetChanged()
+        vb?.rvDaily?.adapter?.notifyDataSetChanged()
     }
 
     override fun updateHourlyList() {
