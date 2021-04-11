@@ -1,0 +1,44 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/hourLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp">
+
+    <TextView
+        android:id="@+id/tv_hour"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        tools:text="text"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/tv_rainfall"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        tools:text="text"
+        android:textSize="12sp"/>
+
+    <ImageView
+        android:id="@+id/iv_hour"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        tools:text="text"
+        android:textSize="12sp"/>
+
+</GridLayout>

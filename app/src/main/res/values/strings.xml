@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Weather</string>
+
+    <string name="PATTERN_HH_MM">HH:mm</string>
+    <string name="PATTERN_FULL_DATE_UPD">yyyy.MM.dd HH:mm:ss</string>
+    <string name="PATTERN_DD_MM">dd.MM</string>
+    <string name="PATTERN_EEE_D_MMM">EEE, d MMM</string>
+
+    <string name="wind_direction_north">N</string>
+    <string name="wind_direction_north_east">NE</string>
+    <string name="wind_direction_east">E</string>
+    <string name="wind_direction_south_east">SE</string>
+    <string name="wind_direction_south">S</string>
+    <string name="wind_direction_south_west">SW</string>
+    <string name="wind_direction_west">W</string>
+    <string name="wind_direction_north_west">NW</string>
+</resources>
