@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.mas.weather_kotlin.databinding.HourBinding
+import com.mas.weather_kotlin.databinding.HourItemBinding
 import com.mas.weather_kotlin.mvp.model.image.IImageLoader
 import com.mas.weather_kotlin.mvp.presenter.list.IHourlyListPresenter
 import com.mas.weather_kotlin.mvp.view.list.IHourItemView
@@ -17,7 +17,7 @@ class HourlyRVAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
-            HourBinding.inflate(
+            HourItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -32,7 +32,7 @@ class HourlyRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         presenter.bindView(holder.apply { pos = position })
 
-    inner class ViewHolder(val vb: HourBinding) : RecyclerView.ViewHolder(vb.root),
+    inner class ViewHolder(val vb: HourItemBinding) : RecyclerView.ViewHolder(vb.root),
         IHourItemView {
         override var pos = -1
         override fun setHour(text: String) = with(vb) {

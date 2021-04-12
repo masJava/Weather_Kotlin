@@ -3,7 +3,7 @@ package com.mas.weather_kotlin.di
 import com.mas.weather_kotlin.di.module.*
 import com.mas.weather_kotlin.mvp.presenter.MainPresenter
 import com.mas.weather_kotlin.mvp.presenter.RepoInfoPresenter
-import com.mas.weather_kotlin.mvp.presenter.UsersInfoPresenter
+import com.mas.weather_kotlin.mvp.presenter.DayInfoPresenter
 import com.mas.weather_kotlin.mvp.presenter.WeatherPresenter
 import com.mas.weather_kotlin.ui.activity.MainActivity
 import dagger.Component
@@ -25,6 +25,6 @@ interface AppComponent {
     fun inject(mainActivity: MainActivity)
     fun inject(mainPresenter: MainPresenter)
     fun inject(weatherPresenter: WeatherPresenter)
-    fun inject(usersInfoPresenter: UsersInfoPresenter)
+    fun inject(dayInfoPresenter: DayInfoPresenter)
     fun inject(repoInfoPresenter: RepoInfoPresenter)
 }

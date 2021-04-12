@@ -48,16 +48,19 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             val time = Tools().decodeTime(Tools().PATTERN_EEE_D_MMM, day.dt, timeZone)
             var maxT = ""
             var minT = ""
-            var humidity = ""
-            var pressure = ""
-            var rain = ""
+            var humidity: String
+            var pressure: String
+            var rain: String
             with(App.instance.resources) {
                 if (day.temp != null) {
-                    maxT = getString(R.string.wi_direction_up) + " %.1f\u00b0C".format(Math.round(day.temp.max * 10) / 10f)
-                    minT = getString(R.string.wi_direction_down) + " %.1f\u00b0C".format(Math.round(day.temp.min * 10) / 10f)
+                    maxT =
+                        getString(R.string.wi_direction_up) + " %.1f\u00b0C".format(Math.round(day.temp.max * 10) / 10f)
+                    minT =
+                        getString(R.string.wi_direction_down) + " %.1f\u00b0C".format(Math.round(day.temp.min * 10) / 10f)
                 }
                 humidity = "${getString(R.string.wi_humidity)} ${day.humidity} %"
-                pressure = "${getString(R.string.wi_barometer)} ${Math.round(day.pressure / 1.333)} mm Hg"
+                pressure =
+                    "${getString(R.string.wi_barometer)} ${Math.round(day.pressure / 1.333)} mm Hg"
                 rain = "${getString(R.string.wi_umbrella)} %.2f mm/h".format(day.rain)
 
             }
@@ -112,11 +115,11 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         loadData()
         viewState.initRV()
 
-//        usersListPresenter.itemClickListener = { view ->
-//            val user = usersListPresenter.users[view.pos]
-//            Log.d("my", user.login)
-//            router.navigateTo(screens.userInfo(user))
-//        }
+        dailyListPresenter.itemClickListener = { view ->
+            val day = dailyListPresenter.dailyWeather[view.pos]
+            Log.d("my", day.temp.toString())
+            router.navigateTo(screens.userInfo(day))
+        }
     }
 
     private fun loadData() {
@@ -216,7 +219,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     }
 
     fun getWindDirection(deg: Int): String {
-        var dirString: String = ""
+        var dirString: String
         with(App.instance.resources) {
             if (deg == 0 || deg == 360) {
                 dirString = getString(R.string.wind_direction_north)

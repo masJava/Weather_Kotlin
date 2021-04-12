@@ -24,10 +24,9 @@ class DailyRVAdapter(
                 parent,
                 false
             )
-        )
-//                .apply {
-//            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
-//        }
+        ).apply {
+            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
+        }
 
     override fun getItemCount() = presenter.getCount()
 
