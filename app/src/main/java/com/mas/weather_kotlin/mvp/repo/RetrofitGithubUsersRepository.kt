@@ -12,21 +12,23 @@ class RetrofitGithubUsersRepository(
     val networkStatus: INetworkStatus,
     val repositoryCache: IGithubRepositoryCache
 ) : IGithubUsersRepo {
-    override fun getUsersRepository(user: GithubUser) =
-        networkStatus.isOnlineSingle().flatMap { isOnline ->
-            if (isOnline) {
-                user.reposUrl.let { url ->
-                    api.getUserRepos(url).flatMap { repositories ->
-                        Single.fromCallable {
-                            repositoryCache.insert(repositories, user)
-                            repositories
-                        }
-                    }
-                }
-            } else {
-                Single.fromCallable {
+    override fun getUsersRepository(user: GithubUser) = Single.fromCallable {
                     repositoryCache.getByUser(user)
                 }
-            }
-        }.subscribeOn(Schedulers.io())
+//        networkStatus.isOnlineSingle().flatMap { isOnline ->
+//            if (isOnline) {
+//                user.reposUrl.let { url ->
+//                    api.getUserRepos(url).flatMap { repositories ->
+//                        Single.fromCallable {
+//                            repositoryCache.insert(repositories, user)
+//                            repositories
+//                        }
+//                    }
+//                }
+//            } else {
+//                Single.fromCallable {
+//                    repositoryCache.getByUser(user)
+//                }
+//            }
+//        }.subscribeOn(Schedulers.io())
 }

@@ -6,7 +6,7 @@ import com.mas.weather_kotlin.mvp.model.entity.GithubUserRepository
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 
 interface IScreens {
-    fun users(): Screen
-    fun userInfo(user: DailyRestModel): Screen
-    fun repoInfo(repo: GithubUserRepository): Screen
+    fun weather(): Screen
+    fun dayInfo(user: DailyRestModel): Screen
+    fun settings(): Screen
 }

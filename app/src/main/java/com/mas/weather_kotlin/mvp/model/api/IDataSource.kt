@@ -1,5 +1,6 @@
 package com.mas.weather_kotlin.mvp.model.api
 
+import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
 import com.mas.weather_kotlin.mvp.model.entity.GithubUser
 import com.mas.weather_kotlin.mvp.model.entity.GithubUserRepository
 import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
@@ -10,16 +11,15 @@ import retrofit2.http.Url
 
 interface IDataSource {
 
-    @GET("users")
-    fun getUsers(): Single<List<GithubUser>>
-
     @GET("data/2.5/onecall")
     fun getWeather(@Query("lat") cityLat: String,
                  @Query("lon") cityLon: String,
                  @Query("appid") keyApi: String,
                  @Query("units") units: String): Single<WeatherRequestRestModel>
 
-    @GET
-    fun getUserRepos(@Url url: String): Single<List<GithubUserRepository>>
+    @GET("geo/1.0/direct")
+    fun getCities(@Query("q") name: String,
+                   @Query("limit") limit: String,
+                   @Query("appid") keyApi: String): Single<List<CitiesRequestModel>>
 
 }

@@ -2,12 +2,13 @@ package com.mas.weather_kotlin.ui.fragment
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
+import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentWeatherBinding
+import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.presenter.WeatherPresenter
 import com.mas.weather_kotlin.mvp.view.WeatherView
 import com.mas.weather_kotlin.ui.App
@@ -17,6 +18,7 @@ import com.mas.weather_kotlin.ui.adapter.HourlyRVAdapter
 import com.mas.weather_kotlin.ui.image.GlideImageLoader
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+
 
 class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener {
 
@@ -32,12 +34,19 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
 
     private var vb: FragmentWeatherBinding? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onCreate(savedInstanceState)
+
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = FragmentWeatherBinding.inflate(inflater, container, false).also {
+    ): View {
+        val fragmentView = FragmentWeatherBinding.inflate(inflater, container, false).also {
             vb = it
         }.root
 
@@ -50,8 +59,24 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.sunrise?.typeface = weatherFont
         vb?.sunset?.typeface = weatherFont
 
-        return view
+        vb?.appBar?.addOnOffsetChangedListener(OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
+                //  Collapsed
+                vb?.toolbarLayout?.title = presenter.settings.city
+
+            } else {
+                //Expanded
+                vb?.toolbarLayout?.title = ""
+            }
+        })
+
+        vb?.fab?.setOnClickListener {
+            presenter.navigateSettings()
+        }
+
+        return fragmentView
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

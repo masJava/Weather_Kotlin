@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.terrakok.cicerone.Router
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.mvp.model.Tools
+import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.model.entity.current.CurrentRestModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.model.entity.hourly.HourlyRestModel
@@ -32,6 +33,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
     @Inject
     lateinit var router: Router
+
+    @Inject
+    lateinit var settings: SettingsModel
 
     @field:Named("mainThread")
     @Inject
@@ -118,13 +122,12 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         dailyListPresenter.itemClickListener = { view ->
             val day = dailyListPresenter.dailyWeather[view.pos]
             Log.d("my", day.temp.toString())
-            router.navigateTo(screens.userInfo(day))
+            router.navigateTo(screens.dayInfo(day))
         }
     }
 
     private fun loadData() {
-
-        weather.getWeather()
+        weather.getWeather(settings.lat, settings.lon)
             .observeOn(uiScheduler)
             .subscribe(
                 { weather ->
@@ -151,6 +154,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 },
                 { t -> Log.d("my", t.message.toString()) })
 
+
     }
 
     private fun currentWeatherUpdate() {
@@ -168,9 +172,11 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             hum = "${getString(R.string.wi_humidity)} ${currentWeather.humidity} %"
             press =
                 "${getString(R.string.wi_barometer)} ${Math.round(currentWeather.pressure / 1.333)} mm Hg"
-            wind = "${getString(R.string.wi_strong_wind)} %s %.2f m/s".format(
-                getWindDirection(currentWeather.wind_deg), currentWeather.wind_speed
-            )
+            wind = "${getString(R.string.wi_strong_wind)} %s %s m/s"
+                .format(
+                    getWindDirection(currentWeather.wind_deg),
+                    Math.round(currentWeather.wind_speed)
+                )
 
             if (currentWeather.sunrise > 0) {
                 sunrise = getString(R.string.wi_sunrise) + " " +
@@ -201,7 +207,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
 
 
-        viewState.setCurrentCityName("Sevastopol")                              //CITY !!!!!
+        viewState.setCurrentCityName(settings.city)                              //CITY !!!!!
         viewState.setUpdate(update)
         viewState.setCurrentTemp(temp)
         viewState.setCurrentHum(hum)
@@ -213,7 +219,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     }
 
     fun backClick(): Boolean {
-        Log.d("my", "usersPres")
+        Log.d("my", "weather back")
         router.exit()
         return true
     }
@@ -248,5 +254,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             }
         }
         return dirString
+    }
+
+    fun navigateSettings() {
+        router.navigateTo(screens.settings())
     }
 }
