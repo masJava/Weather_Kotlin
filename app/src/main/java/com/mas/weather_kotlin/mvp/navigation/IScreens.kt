@@ -7,6 +7,6 @@ import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 
 interface IScreens {
     fun weather(): Screen
-    fun dayInfo(user: DailyRestModel): Screen
+    fun dayInfo(dayWeather: DailyRestModel): Screen
     fun settings(): Screen
 }

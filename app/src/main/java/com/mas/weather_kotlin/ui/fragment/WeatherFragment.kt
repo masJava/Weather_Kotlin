@@ -151,6 +151,14 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.mainWeatherIco?.let { GlideImageLoader().load(weatherIcoId, it) }
     }
 
+    override fun hintVisible(visible: Boolean) {
+        if (visible) {
+            vb?.llHourly?.visibility = View.VISIBLE
+        } else{
+            vb?.llHourly?.visibility = View.INVISIBLE
+        }
+    }
+
     override fun backPressed() = presenter.backClick()
 
 }

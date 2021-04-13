@@ -1,8 +1,8 @@
 package com.mas.weather_kotlin.mvp.model.entity.room.cache
 
-import com.mas.weather_kotlin.mvp.model.entity.GithubUser
+import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
 
 interface IGithubUsersCache {
-    fun insert(users: List<GithubUser>)
-    fun getAll(): List<GithubUser>
+    fun insert(weather: WeatherRequestRestModel)
+    fun getWeather(id:String): WeatherRequestRestModel
 }

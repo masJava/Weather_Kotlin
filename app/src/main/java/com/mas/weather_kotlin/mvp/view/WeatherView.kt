@@ -18,5 +18,7 @@ interface WeatherView : MvpView {
     fun setCurrentSunset(sunset: String)
     fun setCurrentCityName(cityName: String)
     fun setCurrentWeatherIco(weatherIcoId: String)
+    fun hintVisible(visible: Boolean)
+
 
 }

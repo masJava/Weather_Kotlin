@@ -13,22 +13,6 @@ class RetrofitWeather(
     val networkStatus: INetworkStatus,
     val usersCache: IGithubUsersCache
 ) : IOpenWeather {
-//    override fun getUsers() = networkStatus.isOnlineSingle().flatMap { isOnline ->
-//        if (isOnline) {
-//            api.getUsers().flatMap { users ->
-//                Single.fromCallable {
-//                    usersCache.insert(users)
-//                    users
-//                }
-//
-//            }
-//        } else {
-//            Single.fromCallable {
-//                usersCache.getAll()
-//            }
-//        }
-//
-//    }.subscribeOn(Schedulers.io())
 
     override fun getWeather(lat: String, lon: String) =
         networkStatus.isOnlineSingle().flatMap { isOnline ->
@@ -40,15 +24,14 @@ class RetrofitWeather(
                     "metric"
                 ).flatMap { weather ->
                     Single.fromCallable {
-                        //usersCache.insert(weather)
+                        usersCache.insert(weather)
                         weather
                     }
 
                 }
             } else {
                 Single.fromCallable {
-                    //usersCache.getAll()
-                    WeatherRequestRestModel()
+                    usersCache.getWeather(lat+lon)
                 }
             }
 

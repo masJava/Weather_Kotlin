@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.terrakok.cicerone.Router
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.mvp.model.Tools
+import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.navigation.IScreens
 import com.mas.weather_kotlin.mvp.view.DayInfoView
@@ -22,6 +23,9 @@ class DayInfoPresenter(private val day: DailyRestModel) :
 
     @Inject
     lateinit var screens: IScreens
+
+    @Inject
+    lateinit var settings: SettingsModel
 
     @field:Named("mainThread")
     @Inject
@@ -51,6 +55,7 @@ class DayInfoPresenter(private val day: DailyRestModel) :
         }
 
         viewState.setDay(time)
+        viewState.setTitle(settings.city)
         viewState.setTempMax(maxT)
         viewState.setTempMin(minT)
         viewState.setDailyHumidity(humidity)

@@ -62,8 +62,6 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
 
                 val lat = App.instance.resources.getStringArray(R.array.cityLat)
                 val lon = App.instance.resources.getStringArray(R.array.cityLon)
-                vb?.cityLatLon?.text =
-                    "${lat[position]} - ${lon[position]}"                            //del
                 presenter.settings.city = items[position]
                 presenter.settings.lat = lat[position]
                 presenter.settings.lon = lon[position]

@@ -65,6 +65,10 @@ class DayInfoFragment : MvpAppCompatFragment(), DayInfoView, BackButtonListener 
         vb?.tvDay?.text = text
     }
 
+    override fun setTitle(text: String) {
+        vb?.toolbar?.title = text
+    }
+
     override fun setTempMax(text: String) {
         vb?.tvTempMax?.text = text
     }

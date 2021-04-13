@@ -138,11 +138,12 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                             currentWeatherUpdate()
                         }
                         if (weather.hourly != null) {
+                            viewState.hintVisible(true)
                             hourlyListPresenter.hourlyWeather.clear()
                             hourlyListPresenter.hourlyWeather.addAll(weather.hourly)
                             hourlyListPresenter.timeZone = timeZone
                             viewState.updateHourlyList()
-                        }
+                        } else {viewState.hintVisible(false)}
                         if (weather.daily != null) {
                             dailyListPresenter.dailyWeather.clear()
                             dailyListPresenter.dailyWeather.addAll(weather.daily)
