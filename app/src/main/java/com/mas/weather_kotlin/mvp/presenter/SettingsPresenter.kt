@@ -61,6 +61,7 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
                     if (citiesRequest != null) {
                         cities?.clear()
                         cities?.addAll(citiesRequest)
+
                         viewState.setSpinnerAdapter(cities)
                     }
                     Log.d("my", "cities")
@@ -71,9 +72,13 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 
     fun cityToSettings(position: Int) {
         if (position < cities.size) {
-            settings.city = cities.get(position).local_names?.ru.toString()
-            settings.lat = cities.get(position).lat.toString()
-            settings.lon = cities.get(position).lon.toString()
+
+            with(cities.get(position)) {
+                settings.city =
+                    if (local_names?.ru == "") local_names?.featureName.toString() else local_names?.ru.toString()
+                settings.lat = lat.toString()
+                settings.lon = lon.toString()
+            }
             settings.position = position
         }
     }

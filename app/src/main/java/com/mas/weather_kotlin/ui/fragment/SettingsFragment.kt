@@ -92,7 +92,8 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
     override fun setSpinnerAdapter(cities: MutableList<CitiesRequestModel>) {
         var items = mutableListOf<String>()
         cities.forEach {
-            items.add("${it.local_names?.ru} (${it.country})")
+            val city: String = if (it.local_names?.ru == "") it.local_names?.featureName else it.local_names?.ru.toString()
+            items.add("$city (${it.country})")
         }
         val adapter = ArrayAdapter(requireContext(), R.layout.city_list_item, items)
         vb?.spinner?.adapter = adapter
