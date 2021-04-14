@@ -30,7 +30,6 @@ class ApiModule {
     @Singleton
     @Provides
     fun api(gson: Gson): IDataSource = Retrofit.Builder()
-//        .baseUrl("https://api.github.com/")
         .baseUrl("https://api.openweathermap.org/")
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create(gson))

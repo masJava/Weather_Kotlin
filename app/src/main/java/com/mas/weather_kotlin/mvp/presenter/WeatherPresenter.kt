@@ -143,7 +143,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                             hourlyListPresenter.hourlyWeather.addAll(weather.hourly)
                             hourlyListPresenter.timeZone = timeZone
                             viewState.updateHourlyList()
-                        } else {viewState.hintVisible(false)}
+                        } else {
+                            viewState.hintVisible(false)
+                        }
                         if (weather.daily != null) {
                             dailyListPresenter.dailyWeather.clear()
                             dailyListPresenter.dailyWeather.addAll(weather.daily)
@@ -208,7 +210,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
 
 
-        viewState.setCurrentCityName(settings.city)                              //CITY !!!!!
+        viewState.setCurrentCityName(settings.city)
         viewState.setUpdate(update)
         viewState.setCurrentTemp(temp)
         viewState.setCurrentHum(hum)

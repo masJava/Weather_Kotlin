@@ -21,18 +21,10 @@ import moxy.ktx.moxyPresenter
 class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListener {
 
     companion object {
-        //        private const val REPO_ARG = "repo"
         fun newInstance() = SettingsFragment()
-//            .apply {
-//            arguments = Bundle().apply {
-//                putParcelable(REPO_ARG, repo)
-//            }
-//        }
     }
 
     private val presenter by moxyPresenter {
-//        val repo = arguments?.getParcelable<GithubUserRepository>(REPO_ARG) as GithubUserRepository
-//        RepoInfoPresenter(repo).apply {
         SettingsPresenter().apply {
             App.instance.appComponent.inject(this)
         }
@@ -44,7 +36,7 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = FragmentSettingsBinding.inflate(inflater, container, false).also {
             vb = it
         }.root
@@ -60,7 +52,7 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
                 position: Int,
                 selectedId: Long
             ) {
-                    presenter.cityToSettings(position)
+                presenter.cityToSettings(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -90,9 +82,10 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
     }
 
     override fun setSpinnerAdapter(cities: MutableList<CitiesRequestModel>) {
-        var items = mutableListOf<String>()
+        val items = mutableListOf<String>()
         cities.forEach {
-            val city: String = if (it.local_names?.ru == "") it.local_names?.featureName else it.local_names?.ru.toString()
+            val city: String =
+                if (it.local_names?.ru == "") it.local_names.featureName else it.local_names?.ru.toString()
             items.add("$city (${it.country})")
         }
         val adapter = ArrayAdapter(requireContext(), R.layout.city_list_item, items)
@@ -103,20 +96,5 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
         vb?.tiCity?.setText(city)
     }
 
-//    override fun setName(name: String) {
-//        vb?.tvRepoName?.text = name
-//    }
-//
-//    override fun setDescription(description: String) {
-//        vb?.tvDescription?.text = description
-//    }
-//
-//    override fun setUrl(url: String) {
-//        vb?.tvHtmlUrl?.text = url
-//    }
-//
-//    override fun setForkCount(forkCount: String) {
-//        vb?.tvForkCount?.text = forkCount
-//    }
 
 }

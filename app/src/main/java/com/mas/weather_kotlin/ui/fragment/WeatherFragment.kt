@@ -2,13 +2,13 @@ package com.mas.weather_kotlin.ui.fragment
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
-import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentWeatherBinding
-import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.presenter.WeatherPresenter
 import com.mas.weather_kotlin.mvp.view.WeatherView
 import com.mas.weather_kotlin.ui.App
@@ -61,11 +61,8 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
 
         vb?.appBar?.addOnOffsetChangedListener(OnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                //  Collapsed
                 vb?.toolbarLayout?.title = presenter.settings.city
-
             } else {
-                //Expanded
                 vb?.toolbarLayout?.title = ""
             }
         })
@@ -73,7 +70,6 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.fab?.setOnClickListener {
             presenter.navigateSettings()
         }
-
         return fragmentView
     }
 
@@ -84,7 +80,6 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     }
 
     override fun initRV() {
-        //подключение адаптеров списков
         vb?.rvHourly?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         vb?.rvHourly?.adapter = HourlyRVAdapter(presenter.hourlyListPresenter, GlideImageLoader())
@@ -106,12 +101,10 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     }
 
     override fun updateDailyList() {
-        //обновление адаптеров списков
         vb?.rvDaily?.adapter?.notifyDataSetChanged()
     }
 
     override fun updateHourlyList() {
-        //обновление адаптеров списков
         vb?.rvHourly?.adapter?.notifyDataSetChanged()
     }
 
@@ -154,7 +147,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     override fun hintVisible(visible: Boolean) {
         if (visible) {
             vb?.llHourly?.visibility = View.VISIBLE
-        } else{
+        } else {
             vb?.llHourly?.visibility = View.INVISIBLE
         }
     }

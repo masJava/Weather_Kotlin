@@ -8,10 +8,6 @@ import moxy.viewstate.strategy.StateStrategyType
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface SettingsView : MvpView {
     fun setSpinnerPosition(position: Int)
-    fun setSpinnerAdapter(items: MutableList<CitiesRequestModel>)
+    fun setSpinnerAdapter(cities: MutableList<CitiesRequestModel>)
     fun setCity(city: String)
-//    fun setName(name: String)
-//    fun setDescription(description: String)
-//    fun setUrl(url: String)
-//    fun setForkCount(forkCount: String)
 }

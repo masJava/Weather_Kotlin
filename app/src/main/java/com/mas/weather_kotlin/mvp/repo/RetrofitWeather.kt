@@ -2,8 +2,7 @@ package com.mas.weather_kotlin.mvp.repo
 
 import com.mas.weather_kotlin.mvp.model.api.IDataSource
 import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
-import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
-import com.mas.weather_kotlin.mvp.model.entity.room.cache.IGithubUsersCache
+import com.mas.weather_kotlin.mvp.model.entity.room.cache.IWeatherCache
 import com.mas.weather_kotlin.mvp.model.network.INetworkStatus
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -11,7 +10,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class RetrofitWeather(
     val api: IDataSource,
     val networkStatus: INetworkStatus,
-    val usersCache: IGithubUsersCache
+    val weatherCache: IWeatherCache
 ) : IOpenWeather {
 
     override fun getWeather(lat: String, lon: String) =
@@ -24,14 +23,14 @@ class RetrofitWeather(
                     "metric"
                 ).flatMap { weather ->
                     Single.fromCallable {
-                        usersCache.insert(weather)
+                        weatherCache.insert(weather)
                         weather
                     }
 
                 }
             } else {
                 Single.fromCallable {
-                    usersCache.getWeather(lat+lon)
+                    weatherCache.getWeather(lat + lon)
                 }
             }
 
@@ -42,13 +41,11 @@ class RetrofitWeather(
             api.getCities(city, "5", "939ed75243a7e3da09aee0483d738411")
                 .flatMap { cities ->
                     Single.fromCallable {
-                        //usersCache.insert(weather)
                         cities
                     }
                 }
         } else {
             Single.fromCallable {
-                //usersCache.getAll()
                 mutableListOf<CitiesRequestModel>()
             }
         }

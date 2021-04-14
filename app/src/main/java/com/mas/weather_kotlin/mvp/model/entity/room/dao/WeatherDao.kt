@@ -7,31 +7,31 @@ import com.mas.weather_kotlin.mvp.model.entity.room.RoomWeather
 interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: RoomWeather)
+    fun insert(roomWeather: RoomWeather)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(vararg users: RoomWeather)
+    fun insert(vararg roomWeather: RoomWeather)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(users: List<RoomWeather>)
+    fun insert(roomWeather: List<RoomWeather>)
 
     @Update
-    fun update(user: RoomWeather)
+    fun update(roomWeather: RoomWeather)
 
     @Update
-    fun update(vararg users: RoomWeather)
+    fun update(vararg roomWeather: RoomWeather)
 
     @Update
-    fun update(users: List<RoomWeather>)
+    fun update(roomWeather: List<RoomWeather>)
 
     @Delete
-    fun delete(user: RoomWeather)
+    fun delete(roomWeather: RoomWeather)
 
     @Delete
-    fun delete(vararg users: RoomWeather)
+    fun delete(vararg roomWeather: RoomWeather)
 
     @Delete
-    fun delete(users: List<RoomWeather>)
+    fun delete(roomWeather: List<RoomWeather>)
 
     @Query("SELECT * FROM RoomWeather")
     fun getAll(): List<RoomWeather>

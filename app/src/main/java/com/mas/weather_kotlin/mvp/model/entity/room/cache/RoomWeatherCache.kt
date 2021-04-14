@@ -8,7 +8,7 @@ import com.mas.weather_kotlin.mvp.model.entity.current.CurrentRestModel
 import com.mas.weather_kotlin.mvp.model.entity.room.RoomWeather
 import com.mas.weather_kotlin.mvp.model.entity.room.db.Database
 
-class RoomGithubUsersCache(val db: Database) : IGithubUsersCache {
+class RoomWeatherCache(val db: Database) : IWeatherCache {
     override fun insert(weather: WeatherRequestRestModel) {
         with(weather) {
             val id = "${lat.toString()}${lon.toString()}"

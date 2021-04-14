@@ -8,8 +8,8 @@ import com.mas.weather_kotlin.mvp.model.image.IImageLoader
 class GlideImageLoader : IImageLoader<ImageView> {
     override fun load(url: String, container: ImageView) {
         Glide.with(container.context)
-                .load(url)
-                .error(R.drawable.ic_launcher_background)
-                .into(container)
+            .load(url)
+            .error(R.drawable.ic_launcher_background)
+            .into(container)
     }
 }

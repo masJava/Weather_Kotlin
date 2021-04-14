@@ -12,7 +12,6 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 import javax.inject.Named
 
-//class RepoInfoPresenter(private val repo: GithubUserRepository) : MvpPresenter<RepoInfoView>() {
 class SettingsPresenter() : MvpPresenter<SettingsView>() {
 
     @Inject
@@ -40,27 +39,17 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
             loadData(settings.city)
         viewState.setSpinnerPosition(settings.position)
         viewState.setCity(settings.city)
-//        viewState.setName(repo.name)
-//        viewState.setDescription("Description\n${repo.description}")
-//        viewState.setUrl(repo.htmlUrl)
-//        viewState.setForkCount("Fork count: ${repo.forks_count}")
     }
 
-//    fun changeSettings(city: String, lat:String,lon:String,position: Int){
-//        settings.city = city
-//        settings.lat = lat
-//        settings.lon = lon
-//        settings.position = position
-//    }
 
-    fun loadData(city: String): MutableList<CitiesRequestModel>? {
+    fun loadData(city: String): MutableList<CitiesRequestModel> {
         weather.getCities(city)
             .observeOn(uiScheduler)
             .subscribe(
                 { citiesRequest ->
                     if (citiesRequest != null) {
-                        cities?.clear()
-                        cities?.addAll(citiesRequest)
+                        cities.clear()
+                        cities.addAll(citiesRequest)
 
                         viewState.setSpinnerAdapter(cities)
                     }
@@ -75,7 +64,7 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 
             with(cities.get(position)) {
                 settings.city =
-                    if (local_names?.ru == "") local_names?.featureName.toString() else local_names?.ru.toString()
+                    if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
                 settings.lat = lat.toString()
                 settings.lon = lon.toString()
             }

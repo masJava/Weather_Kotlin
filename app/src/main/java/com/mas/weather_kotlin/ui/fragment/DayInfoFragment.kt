@@ -39,11 +39,12 @@ class DayInfoFragment : MvpAppCompatFragment(), DayInfoView, BackButtonListener 
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val fragmentView = FragmentDayInfoBinding.inflate(inflater, container, false).also {
-        vb = it
-    }.root
-        val weatherFont = Typeface.createFromAsset(App.instance.resources.assets, "fonts/weather.ttf")
+            vb = it
+        }.root
+        val weatherFont =
+            Typeface.createFromAsset(App.instance.resources.assets, "fonts/weather.ttf")
         vb?.tvDay?.typeface = weatherFont
         vb?.tvTempMin?.typeface = weatherFont
         vb?.tvTempMax?.typeface = weatherFont

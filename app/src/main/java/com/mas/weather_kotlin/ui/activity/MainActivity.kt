@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -23,6 +22,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     @Inject
     lateinit var router: Router
+
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 

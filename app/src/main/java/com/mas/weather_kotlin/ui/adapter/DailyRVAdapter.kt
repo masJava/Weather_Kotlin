@@ -36,7 +36,8 @@ class DailyRVAdapter(
     inner class ViewHolder(val vb: DayItemBinding) : RecyclerView.ViewHolder(vb.root),
         IDailyItemView {
         override var pos = -1
-        val weatherFont = Typeface.createFromAsset(App.instance.resources.assets, "fonts/weather.ttf")
+        val weatherFont =
+            Typeface.createFromAsset(App.instance.resources.assets, "fonts/weather.ttf")
 
         override fun setDay(text: String) = with(vb) {
             tvDay.typeface = weatherFont

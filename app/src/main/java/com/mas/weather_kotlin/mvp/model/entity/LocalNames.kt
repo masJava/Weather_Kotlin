@@ -8,4 +8,4 @@ import kotlinx.parcelize.Parcelize
 data class LocalNames(
     @Expose val ru: String = "",
     @Expose val featureName: String = "",
-    ) : Parcelable
+) : Parcelable

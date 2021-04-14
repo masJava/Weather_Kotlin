@@ -1,7 +1,7 @@
 package com.mas.weather_kotlin.di.module
 
 import com.mas.weather_kotlin.mvp.model.api.IDataSource
-import com.mas.weather_kotlin.mvp.model.entity.room.cache.IGithubUsersCache
+import com.mas.weather_kotlin.mvp.model.entity.room.cache.IWeatherCache
 import com.mas.weather_kotlin.mvp.model.network.INetworkStatus
 import com.mas.weather_kotlin.mvp.repo.IOpenWeather
 import com.mas.weather_kotlin.mvp.repo.RetrofitWeather
@@ -10,13 +10,13 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class RepoModule {
+class WeatherModule {
 
     @Singleton
     @Provides
-    fun users(
+    fun weather(
         api: IDataSource,
         networkStatus: INetworkStatus,
-        usersCache: IGithubUsersCache
-    ): IOpenWeather = RetrofitWeather(api, networkStatus, usersCache)
+        weatherCache: IWeatherCache
+    ): IOpenWeather = RetrofitWeather(api, networkStatus, weatherCache)
 }

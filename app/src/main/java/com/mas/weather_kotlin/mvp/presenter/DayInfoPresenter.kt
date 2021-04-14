@@ -34,7 +34,11 @@ class DayInfoPresenter(private val day: DailyRestModel) :
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        val time = Tools().decodeTime(Tools().PATTERN_EEE_D_MMM, day.dt, GregorianCalendar().timeZone.rawOffset / 1000L)
+        val time = Tools().decodeTime(
+            Tools().PATTERN_EEE_D_MMM,
+            day.dt,
+            GregorianCalendar().timeZone.rawOffset / 1000L
+        )
         var maxT = ""
         var minT = ""
         var humidity: String
@@ -69,7 +73,7 @@ class DayInfoPresenter(private val day: DailyRestModel) :
 
 
     fun backClick(): Boolean {
-        Log.d("my", "UserInfoPres")
+        Log.d("my", "DayInfoPres")
         router.exit()
         return true
     }

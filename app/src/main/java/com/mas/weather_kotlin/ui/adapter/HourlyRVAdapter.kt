@@ -23,9 +23,6 @@ class HourlyRVAdapter(
                 false
             )
         )
-//                .apply {
-//            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
-//        }
 
     override fun getItemCount() = presenter.getCount()
 
