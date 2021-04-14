@@ -31,11 +31,15 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
     @Inject
     lateinit var uiScheduler: Scheduler
 
+    var cities = mutableListOf<CitiesRequestModel>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.d("my", "Settings")
+        if (settings.city.isNotEmpty())
+            loadData(settings.city)
         viewState.setSpinnerPosition(settings.position)
+        viewState.setCity(settings.city)
 //        viewState.setName(repo.name)
 //        viewState.setDescription("Description\n${repo.description}")
 //        viewState.setUrl(repo.htmlUrl)
@@ -50,7 +54,6 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 //    }
 
     fun loadData(city: String): MutableList<CitiesRequestModel>? {
-        var cities: MutableList<CitiesRequestModel>? = null
         weather.getCities(city)
             .observeOn(uiScheduler)
             .subscribe(
@@ -58,6 +61,7 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
                     if (citiesRequest != null) {
                         cities?.clear()
                         cities?.addAll(citiesRequest)
+                        viewState.setSpinnerAdapter(cities)
                     }
                     Log.d("my", "cities")
                 },
@@ -65,7 +69,16 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
         return cities
     }
 
-    fun goToWeather(){
+    fun cityToSettings(position: Int) {
+        if (position < cities.size) {
+            settings.city = cities.get(position).local_names?.ru.toString()
+            settings.lat = cities.get(position).lat.toString()
+            settings.lon = cities.get(position).lon.toString()
+            settings.position = position
+        }
+    }
+
+    fun goToWeather() {
         router.newRootScreen(screens.weather())
     }
 

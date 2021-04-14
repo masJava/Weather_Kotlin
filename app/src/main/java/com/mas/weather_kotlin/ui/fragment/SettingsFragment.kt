@@ -9,6 +9,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentSettingsBinding
+import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
 import com.mas.weather_kotlin.mvp.presenter.SettingsPresenter
 import com.mas.weather_kotlin.mvp.view.SettingsView
 import com.mas.weather_kotlin.ui.App
@@ -59,13 +60,7 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
                 position: Int,
                 selectedId: Long
             ) {
-
-                val lat = App.instance.resources.getStringArray(R.array.cityLat)
-                val lon = App.instance.resources.getStringArray(R.array.cityLon)
-                presenter.settings.city = items[position]
-                presenter.settings.lat = lat[position]
-                presenter.settings.lon = lon[position]
-                presenter.settings.position = position
+                    presenter.cityToSettings(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -73,6 +68,10 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
 
         vb?.bSave?.setOnClickListener {
             presenter.goToWeather()
+        }
+
+        vb?.tilCity?.setEndIconOnClickListener {
+            presenter.loadData(vb?.tiCity?.text.toString().trim())
         }
 
         return view
@@ -88,6 +87,19 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
 
     override fun setSpinnerPosition(position: Int) {
         vb?.spinner?.setSelection(position)
+    }
+
+    override fun setSpinnerAdapter(cities: MutableList<CitiesRequestModel>) {
+        var items = mutableListOf<String>()
+        cities.forEach {
+            items.add("${it.local_names?.ru} (${it.country})")
+        }
+        val adapter = ArrayAdapter(requireContext(), R.layout.city_list_item, items)
+        vb?.spinner?.adapter = adapter
+    }
+
+    override fun setCity(city: String) {
+        vb?.tiCity?.setText(city)
     }
 
 //    override fun setName(name: String) {

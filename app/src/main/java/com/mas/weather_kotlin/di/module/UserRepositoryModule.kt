@@ -17,6 +17,5 @@ class UserRepositoryModule {
     fun repos(
         api: IDataSource,
         networkStatus: INetworkStatus,
-        repositoryCache: IGithubRepositoryCache
-    ): IGithubUsersRepo = RetrofitGithubUsersRepository(api, networkStatus, repositoryCache)
+    ): IGithubUsersRepo = RetrofitGithubUsersRepository(api, networkStatus)
 }

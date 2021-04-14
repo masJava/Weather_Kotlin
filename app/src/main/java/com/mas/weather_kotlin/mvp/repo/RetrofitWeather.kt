@@ -45,7 +45,6 @@ class RetrofitWeather(
                         //usersCache.insert(weather)
                         cities
                     }
-
                 }
         } else {
             Single.fromCallable {
@@ -55,4 +54,5 @@ class RetrofitWeather(
         }
 
     }.subscribeOn(Schedulers.io())
+
 }
