@@ -49,7 +49,27 @@ class RetrofitWeather(
                 mutableListOf<CitiesRequestModel>()
             }
         }
-
     }.subscribeOn(Schedulers.io())
+
+    override fun getCitiesGPS(lat: Double, lon: Double) =
+        networkStatus.isOnlineSingle().flatMap { isOnline ->
+            if (isOnline) {
+                api.getCitiesGPS(
+                    lat.toString(),
+                    lon.toString(),
+                    "1",
+                    "939ed75243a7e3da09aee0483d738411"
+                )
+                    .flatMap { cities ->
+                        Single.fromCallable {
+                            cities
+                        }
+                    }
+            } else {
+                Single.fromCallable {
+                    mutableListOf<CitiesRequestModel>()
+                }
+            }
+        }.subscribeOn(Schedulers.io())
 
 }

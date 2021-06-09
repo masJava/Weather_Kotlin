@@ -10,4 +10,7 @@ interface SettingsView : MvpView {
     fun setSpinnerPosition(position: Int)
     fun setSpinnerAdapter(cities: MutableList<CitiesRequestModel>)
     fun setCity(city: String)
+    fun setGPSSwitch(gpsKey: Boolean)
+    fun setGPSText(location: String)
+    fun showToast(text: String)
 }

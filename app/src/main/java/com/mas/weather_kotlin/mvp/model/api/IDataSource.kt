@@ -23,4 +23,12 @@ interface IDataSource {
         @Query("appid") keyApi: String
     ): Single<List<CitiesRequestModel>>
 
+    @GET("geo/1.0/reverse")
+    fun getCitiesGPS(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("limit") limit: String,
+        @Query("appid") keyApi: String
+    ): Single<List<CitiesRequestModel>>
+
 }

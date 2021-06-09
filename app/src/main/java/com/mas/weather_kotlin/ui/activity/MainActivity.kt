@@ -1,9 +1,12 @@
 package com.mas.weather_kotlin.ui.activity
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -47,6 +50,28 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         sharedPref = baseContext.getSharedPreferences("WEATHER", Context.MODE_PRIVATE)
         loadPreferences()
+
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 123
+            );
+
+            Log.d("my", "Location false")
+            return
+        }
+
     }
 
     private fun loadPreferences() {
@@ -54,6 +79,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         settings.lat = sharedPref.getString("LAT", "").toString()
         settings.lon = sharedPref.getString("LON", "").toString()
         settings.position = sharedPref.getInt("POSITION", 0)
+        settings.gpsKey = sharedPref.getBoolean("GPSKEY", false)
     }
 
     private fun savePreferences() {
@@ -62,6 +88,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         editor.putString("LAT", settings.lat)
         editor.putString("LON", settings.lon)
         editor.putInt("POSITION", settings.position)
+        editor.putBoolean("GPSKEY", settings.gpsKey)
         editor.apply()
         Log.d("my", "settings save")
 

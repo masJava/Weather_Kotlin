@@ -172,6 +172,7 @@
                     android:id="@+id/rv_hourly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="horizontal" />
             </LinearLayout>
 
@@ -180,6 +181,7 @@
                 android:layout_margin="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/day_item" />
         </LinearLayout>

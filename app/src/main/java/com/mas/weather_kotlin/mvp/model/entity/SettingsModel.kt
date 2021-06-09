@@ -9,4 +9,5 @@ data class SettingsModel(
     var lat: String = "",
     var lon: String = "",
     var position: Int = 0,
+    var gpsKey: Boolean = false
 ) : Parcelable

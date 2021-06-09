@@ -1,5 +1,7 @@
 package com.mas.weather_kotlin.di.module
 
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -47,4 +49,10 @@ class ApiModule {
     @Singleton
     @Provides
     fun settings(): SettingsModel = SettingsModel()
+
+    @Singleton
+    @Provides
+    fun fusedLocationClient(app: App): FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(app)
+
+
 }

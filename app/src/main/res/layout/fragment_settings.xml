@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_city"
+            android:id="@+id/layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/my_spinner_dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <Switch
+            android:id="@+id/sw_gps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:hint="City"
-            app:endIconDrawable="@android:drawable/ic_search_category_default"
-            app:endIconMode="custom">
+            android:text="Use GPS"
+            tools:checked="false"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ti_city"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            />
-
-        <Spinner
-            android:id="@+id/spinner"
+        <TextView
+            android:id="@+id/tv_lat_lon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp" />
@@ -47,7 +44,6 @@
             android:text="Save" />
 
 
-    </LinearLayout>
 
 
 </LinearLayout>
