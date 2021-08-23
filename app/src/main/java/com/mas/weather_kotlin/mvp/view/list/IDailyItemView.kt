@@ -7,5 +7,5 @@ interface IDailyItemView : IItemView {
     fun setDailyPressure(text: String)
     fun setDailyHumidity(text: String)
     fun setDailyRain(text: String)
-    fun loadWeatherIco(url: String)
+    fun loadWeatherIco(IcoId: Int)
 }

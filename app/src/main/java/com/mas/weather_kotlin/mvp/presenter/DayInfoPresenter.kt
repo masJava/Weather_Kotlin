@@ -6,6 +6,8 @@ import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.mvp.model.Tools
 import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
+import com.mas.weather_kotlin.mvp.model.round1
+import com.mas.weather_kotlin.mvp.model.toStrTime
 import com.mas.weather_kotlin.mvp.navigation.IScreens
 import com.mas.weather_kotlin.mvp.view.DayInfoView
 import com.mas.weather_kotlin.ui.App
@@ -14,6 +16,7 @@ import moxy.MvpPresenter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.math.roundToInt
 
 class DayInfoPresenter(private val day: DailyRestModel) :
     MvpPresenter<DayInfoView>() {
@@ -34,9 +37,8 @@ class DayInfoPresenter(private val day: DailyRestModel) :
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        val time = Tools().decodeTime(
+        val time = day.dt.toStrTime(
             Tools().PATTERN_EEE_D_MMM,
-            day.dt,
             GregorianCalendar().timeZone.rawOffset / 1000L
         )
         var maxT = ""
@@ -47,14 +49,19 @@ class DayInfoPresenter(private val day: DailyRestModel) :
         with(App.instance.resources) {
             if (day.temp != null) {
                 maxT =
-                    getString(R.string.wi_direction_up) + " %.1f\u00b0C".format(Math.round(day.temp.max * 10) / 10f)
+                    getString(R.string.wi_direction_up) + " %.1f\u00b0C".format(day.temp.max.round1())
                 minT =
-                    getString(R.string.wi_direction_down) + " %.1f\u00b0C".format(Math.round(day.temp.min * 10) / 10f)
+                    getString(R.string.wi_direction_down) + " %.1f\u00b0C".format(day.temp.min.round1())
             }
             humidity = "${getString(R.string.wi_humidity)} ${day.humidity} %"
             pressure =
-                "${getString(R.string.wi_barometer)} ${Math.round(day.pressure / 1.333)} mm Hg"
-            rain = "${getString(R.string.wi_umbrella)} %.2f mm/h".format(day.rain)
+                "${getString(R.string.wi_barometer)} ${(day.pressure / 1.333).roundToInt()} mm Hg"
+
+            if (settings.percentRain) {
+                rain = "${getString(R.string.wi_umbrella)} ${(day.pop * 100).roundToInt()} % "
+            } else {
+                rain = "${getString(R.string.wi_umbrella)} %.2f mm".format(day.rain)
+            }
 
         }
 

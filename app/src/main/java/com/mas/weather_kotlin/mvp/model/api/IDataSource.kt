@@ -1,5 +1,6 @@
 package com.mas.weather_kotlin.mvp.model.api
 
+import com.google.gson.JsonObject
 import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
 import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
 import io.reactivex.rxjava3.core.Single
@@ -15,6 +16,14 @@ interface IDataSource {
         @Query("appid") keyApi: String,
         @Query("units") units: String
     ): Single<WeatherRequestRestModel>
+
+    @GET("data/2.5/onecall")
+    fun getWeatherString(
+        @Query("lat") cityLat: String,
+        @Query("lon") cityLon: String,
+        @Query("appid") keyApi: String,
+        @Query("units") units: String
+    ): Single<JsonObject>
 
     @GET("geo/1.0/direct")
     fun getCities(

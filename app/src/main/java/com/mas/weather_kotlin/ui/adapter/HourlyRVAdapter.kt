@@ -8,6 +8,7 @@ import com.mas.weather_kotlin.databinding.HourItemBinding
 import com.mas.weather_kotlin.mvp.model.image.IImageLoader
 import com.mas.weather_kotlin.mvp.presenter.list.IHourlyListPresenter
 import com.mas.weather_kotlin.mvp.view.list.IHourItemView
+import com.mas.weather_kotlin.ui.App
 
 class HourlyRVAdapter(
     val presenter: IHourlyListPresenter,
@@ -44,8 +45,9 @@ class HourlyRVAdapter(
             tvTemp.text = text
         }
 
-        override fun loadWeatherIco(url: String) = with(vb) {
-            imageLoader.load(url, ivHour)
+        override fun loadWeatherIco(iconId: Int) = with(vb) {
+//            imageLoader.load(url, ivHour)
+            ivHour.setImageDrawable(App.instance.getDrawable(iconId))
         }
 
 

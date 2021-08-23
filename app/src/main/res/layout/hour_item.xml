@@ -1,44 +1,55 @@
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/hourLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="vertical"
     android:paddingStart="5dp"
-    android:paddingEnd="5dp">
+    android:paddingEnd="5dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="5dp">
 
-    <TextView
-        android:id="@+id/tv_hour"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_columnWeight="1"
-        android:layout_gravity="center"
-        tools:text="text"
-        android:textSize="12sp"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_rainfall"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        tools:text="text"
-        android:textSize="12sp"/>
 
-    <ImageView
-        android:id="@+id/iv_hour"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_columnWeight="1"
-        android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/tv_hour"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            tools:text="text" />
 
-    <TextView
-        android:id="@+id/tv_temp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_columnWeight="1"
-        android:layout_gravity="center"
-        tools:text="text"
-        android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/tv_rainfall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            tools:text="text" />
 
-</GridLayout>
+        <ImageView
+            android:id="@+id/iv_hour"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tv_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            tools:text="text" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

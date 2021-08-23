@@ -21,5 +21,6 @@ data class DailyRestModel(
     @Expose val rain: Float = 0f,
     @Expose val snow: Float = 0f,
     @Expose val wind_deg: Int = 0,
-    @Expose val weather: List<WeatherRestModel>? = null
+    @Expose val weather: List<WeatherRestModel>? = null,
+    @Expose val pop: Float = 0f
 ) : Parcelable

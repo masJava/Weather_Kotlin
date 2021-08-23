@@ -20,5 +20,6 @@ data class HourlyRestModel(
     @Expose val wind_deg: Int = 0,
     @Expose val weather: List<WeatherRestModel>? = null,
     @Expose val rain: Rain? = null,
-    @Expose val snow: Snow? = null
+    @Expose val snow: Snow? = null,
+    @Expose val pop: Float = 0f
 ) : Parcelable

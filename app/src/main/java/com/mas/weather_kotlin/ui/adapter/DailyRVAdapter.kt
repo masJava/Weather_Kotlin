@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.mas.weather_kotlin.databinding.DayItemBinding
+import com.mas.weather_kotlin.databinding.DayItemCardBinding
 import com.mas.weather_kotlin.mvp.model.image.IImageLoader
 import com.mas.weather_kotlin.mvp.presenter.list.IDailyListPresenter
 import com.mas.weather_kotlin.mvp.view.list.IDailyItemView
@@ -19,7 +19,8 @@ class DailyRVAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
-            DayItemBinding.inflate(
+//            DayItemBinding.inflate(
+            DayItemCardBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -33,7 +34,7 @@ class DailyRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         presenter.bindView(holder.apply { pos = position })
 
-    inner class ViewHolder(val vb: DayItemBinding) : RecyclerView.ViewHolder(vb.root),
+    inner class ViewHolder(val vb: DayItemCardBinding) : RecyclerView.ViewHolder(vb.root),
         IDailyItemView {
         override var pos = -1
         val weatherFont =
@@ -70,8 +71,9 @@ class DailyRVAdapter(
         }
 
 
-        override fun loadWeatherIco(url: String) = with(vb) {
-            imageLoader.load(url, ivDayImage)
+        override fun loadWeatherIco(iconId: Int) = with(vb) {
+//            imageLoader.load(url, ivDayImage)
+            ivDayImage.setImageDrawable(App.instance.baseContext.getDrawable(iconId))
         }
 
 

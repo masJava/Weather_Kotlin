@@ -80,6 +80,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         settings.lon = sharedPref.getString("LON", "").toString()
         settings.position = sharedPref.getInt("POSITION", 0)
         settings.gpsKey = sharedPref.getBoolean("GPSKEY", false)
+        settings.percentRain = sharedPref.getBoolean("PERCENTRAIN", false)
+        settings.swTemp = sharedPref.getBoolean("SWTEMP", false)
+        settings.swWind = sharedPref.getBoolean("SWWIND", false)
+        settings.swRain = sharedPref.getBoolean("SWRAIN", false)
+        settings.jsonTxt = sharedPref.getString("OLDJSON", "").toString()
     }
 
     private fun savePreferences() {
@@ -89,6 +94,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         editor.putString("LON", settings.lon)
         editor.putInt("POSITION", settings.position)
         editor.putBoolean("GPSKEY", settings.gpsKey)
+        editor.putBoolean("PERCENTRAIN", settings.percentRain)
+        editor.putBoolean("SWTEMP", settings.swTemp)
+        editor.putBoolean("SWWIND", settings.swWind)
+        editor.putBoolean("SWRAIN", settings.swRain)
+        editor.putString("OLDJSON", settings.jsonTxt)
         editor.apply()
         Log.d("my", "settings save")
 

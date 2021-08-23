@@ -1,5 +1,6 @@
 package com.mas.weather_kotlin.mvp.repo
 
+import com.mas.weather_kotlin.BuildConfig
 import com.mas.weather_kotlin.mvp.model.api.IDataSource
 import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
 import com.mas.weather_kotlin.mvp.model.entity.room.cache.IWeatherCache
@@ -19,26 +20,40 @@ class RetrofitWeather(
                 api.getWeather(
                     lat,
                     lon,
-                    "939ed75243a7e3da09aee0483d738411",
+                    BuildConfig.API_KEY,
                     "metric"
                 ).flatMap { weather ->
                     Single.fromCallable {
                         weatherCache.insert(weather)
                         weather
                     }
-
                 }
             } else {
                 Single.fromCallable {
                     weatherCache.getWeather(lat + lon)
                 }
             }
+        }.subscribeOn(Schedulers.io())
 
+    override fun getJsonStr(lat: String, lon: String) =
+        networkStatus.isOnlineSingle().flatMap { isOnline ->
+            if (isOnline) {
+                api.getWeatherString(
+                    lat,
+                    lon,
+                    BuildConfig.API_KEY,
+                    "metric"
+                ).flatMap {
+                    Single.fromCallable { it }
+                }
+            } else {
+                Single.fromCallable { null }
+            }
         }.subscribeOn(Schedulers.io())
 
     override fun getCities(city: String) = networkStatus.isOnlineSingle().flatMap { isOnline ->
         if (isOnline) {
-            api.getCities(city, "5", "939ed75243a7e3da09aee0483d738411")
+            api.getCities(city, "5", BuildConfig.API_KEY)
                 .flatMap { cities ->
                     Single.fromCallable {
                         cities
@@ -58,7 +73,7 @@ class RetrofitWeather(
                     lat.toString(),
                     lon.toString(),
                     "1",
-                    "939ed75243a7e3da09aee0483d738411"
+                    BuildConfig.API_KEY
                 )
                     .flatMap { cities ->
                         Single.fromCallable {
