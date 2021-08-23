@@ -11,7 +11,7 @@ data class DailyRestModel(
     @Expose val sunrise: Long = 0L,
     @Expose val sunset: Long = 0L,
     @Expose val temp: Temp? = null,
-    @Expose val feelsLike: Feels_like? = null,
+    @Expose val feels_like: Feels_like? = null,
     @Expose val pressure: Int = 0,
     @Expose val humidity: Int = 0,
     @Expose val dew_point: Float = 0f,

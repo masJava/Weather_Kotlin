@@ -12,9 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="City">
+        android:hint="City"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_baseline_report_24"
+        app:endIconContentDescription="Fail"
+        >
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/city_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -65,15 +69,6 @@
         android:text="Snow graph rain"
         tools:checked="false"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/b_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:text="Save" />
 
 
 </LinearLayout>

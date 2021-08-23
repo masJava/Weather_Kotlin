@@ -53,7 +53,7 @@ class RetrofitWeather(
 
     override fun getCities(city: String) = networkStatus.isOnlineSingle().flatMap { isOnline ->
         if (isOnline) {
-            api.getCities(city, "5", BuildConfig.API_KEY)
+            api.getCities(city, "1", BuildConfig.API_KEY)
                 .flatMap { cities ->
                     Single.fromCallable {
                         cities

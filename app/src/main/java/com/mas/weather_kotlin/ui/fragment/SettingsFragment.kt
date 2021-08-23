@@ -5,13 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentSettingsBinding
-import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
 import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.presenter.SettingsPresenter
 import com.mas.weather_kotlin.mvp.view.SettingsView
@@ -51,21 +49,18 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
 //            vb?.mySpinnerDropdown?.setAdapter(it)
 //        }
 
-
-        vb?.citySpinner?.onItemClickListener = object : AdapterView.OnItemClickListener {
-            override fun onItemClick(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                presenter.cityToSettings(position)
-            }
-        }
-
-        vb?.bSave?.setOnClickListener {
-            presenter.goToWeather()
-        }
+        //TODO
+//переделать сохранение
+//        vb?.citySpinner?.onItemClickListener = object : AdapterView.OnItemClickListener {
+//            override fun onItemClick(
+//                parent: AdapterView<*>?,
+//                view: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//                presenter.cityToSettings(position)
+//            }
+//        }
 
         vb?.swGps?.setOnCheckedChangeListener { _, isChecked ->
             presenter.gpsSettingsChange(isChecked)
@@ -75,16 +70,16 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
             presenter.percentSettingsChange(isChecked)
         }
 
-        vb?.swGraphWind?.setOnCheckedChangeListener(){_, isChecked ->
-            if (isChecked) setGraphSw(!isChecked,isChecked)
+        vb?.swGraphWind?.setOnCheckedChangeListener() { _, isChecked ->
+            if (isChecked) setGraphSw(!isChecked, isChecked)
             presenter.settings.swWind = isChecked
         }
-        vb?.swGraphTemp?.setOnCheckedChangeListener(){_, isChecked ->
-            if (isChecked) setGraphSw(isChecked,!isChecked)
+        vb?.swGraphTemp?.setOnCheckedChangeListener() { _, isChecked ->
+            if (isChecked) setGraphSw(isChecked, !isChecked)
             presenter.settings.swTemp = isChecked
         }
 
-        vb?.swGraphRain?.setOnCheckedChangeListener(){_, isChecked ->
+        vb?.swGraphRain?.setOnCheckedChangeListener() { _, isChecked ->
             presenter.settings.swRain = isChecked
         }
 
@@ -101,6 +96,7 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
             vb?.citySpinner?.doAfterTextChanged { null }
         } else {
             var timer = Timer()
+            setCityReportLogo(false)
             vb?.citySpinner?.doAfterTextChanged {
                 if (vb?.swGps?.isChecked == false && vb?.citySpinner?.hasFocus() == true) {
                     timer.cancel()
@@ -108,7 +104,7 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
                     timer.schedule(
                         object : TimerTask() {
                             override fun run() {
-                                presenter.loadCityList(it.toString().trim(), false)
+                                presenter.loadCityList(it.toString().trim())
 
                                 //google geo
 //                                geo(it.toString().trim(),5)
@@ -138,7 +134,7 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
         }
     }
 
-    private fun geo(city:String, maxResult: Int) =
+    private fun geo(city: String, maxResult: Int) =
         Single.fromCallable {
             Geocoder(context).getFromLocationName(city, maxResult)
         }
@@ -150,25 +146,21 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
 
     override fun backPressed() = presenter.backClick()
 
-    override fun setSpinnerPosition(position: Int) {
-//       vb?.spinner?.setSelection(position)
-    }
-
-    override fun setSpinnerAdapter(cities: MutableList<CitiesRequestModel>, firstCall: Boolean) {
-        val items = mutableListOf<String>()
-        cities.forEach {
-            val city: String =
-                if (it.local_names?.ru == "") it.local_names.featureName else it.local_names?.ru.toString()
-            items.add("$city (${it.country})")
-        }
-        ArrayAdapter(requireContext(), R.layout.city_list_item, items).also {
-            vb?.citySpinner?.setAdapter(it)
-            if (firstCall == false) vb?.citySpinner?.showDropDown()
-        }
-    }
-
     override fun setCity(city: String) {
-        vb?.citySpinner?.setText(city, false)
+        vb?.citySpinner?.setText(city)
+    }
+
+    override fun setCityReportLogo(report: Boolean) {
+        if (report) {
+            vb?.tiMainCity?.endIconDrawable =
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_check_24)
+//            vb?.tiMainCity?.endIconDrawable = resources?.getDrawable(R.drawable.ic_baseline_check_24)
+            vb?.tiMainCity?.endIconContentDescription = "OK"
+        } else {
+            vb?.tiMainCity?.endIconDrawable =
+                resources?.getDrawable(R.drawable.ic_baseline_report_24)
+            vb?.tiMainCity?.endIconContentDescription = "FAIL"
+        }
     }
 
     override fun setSwitch(settings: SettingsModel) {

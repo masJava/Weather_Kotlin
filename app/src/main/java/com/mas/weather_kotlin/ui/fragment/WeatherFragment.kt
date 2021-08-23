@@ -110,14 +110,12 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         lAxisMinMax: Pair<Float, Float>,
         rAxisMinMax: Pair<Float, Float>
     )
-//                (dailyTemp: List<Entry>, dailyWind: List<Entry>, xAxis: List<String>, dailyRain: List<BarEntry>)
     {
         with(vb?.chart1!!) {
             description?.text = "Daily weather"
 
             this.xAxis.valueFormatter = IndexAxisValueFormatter(xAxis)
             this.xAxis.labelRotationAngle = -45f
-//            this.xAxis.setLabelCount(xAxis.count(), true)
 
             axisLeft?.axisMinimum = lAxisMinMax.first
             axisLeft?.axisMaximum = lAxisMinMax.second
@@ -128,7 +126,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
             this.data = data
             description.isEnabled = true
 
-            animateX(1000)
+            animateX(1)
             legend?.form = LegendForm.LINE
             setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
                 override fun onValueSelected(e: Entry?, h: Highlight?) {

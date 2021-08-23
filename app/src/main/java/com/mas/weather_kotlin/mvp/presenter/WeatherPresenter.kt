@@ -366,7 +366,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 lAxisMinMax = getMinMaxPair(lAxisMinMax, day.wind_speed.round1())
             }
 
-            dailyRain.add(BarEntry(num, day.rain.round1()))
+            if (settings.swRain) {
+                dailyRain.add(BarEntry(num, day.rain.round1()))
+            }
             rAxisMinMax =
                 getMinMaxPair(rAxisMinMax, day.rain.round1())
             if (settings.swWind || (settings.swRain && !settings.swTemp))

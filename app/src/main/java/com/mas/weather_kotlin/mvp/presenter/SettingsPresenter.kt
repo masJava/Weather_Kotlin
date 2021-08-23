@@ -33,50 +33,57 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
     @Inject
     lateinit var uiScheduler: Scheduler
 
-    var cities = mutableListOf<CitiesRequestModel>()
+//    var cities = mutableListOf<CitiesRequestModel>()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.d("my", "Settings")
         if (settings.city.isNotEmpty())
-            loadCityList(settings.city, true)
+            loadCityList(settings.city)
 //        viewState.setSpinnerPosition(settings.position)
         viewState.setCity(settings.city)
         viewState.setSwitch(settings)
         viewState.setCitySpinnerTextChangedListener(settings.gpsKey)
     }
 
-    fun loadCityList(city: String, fistCall: Boolean): MutableList<CitiesRequestModel> {
+    fun loadCityList(city: String){
         weather.getCities(city)
             .observeOn(uiScheduler)
             .subscribe(
                 { citiesRequest ->
                     if (citiesRequest != null) {
-                        if (citiesRequest.size == 0) {
-                            viewState.showToast("Unknown city")
+                        if (citiesRequest.isEmpty()) {
+//                            viewState.showToast("Unknown city")
+                            viewState.setCityReportLogo(false)
+                        } else {
+                            if (cityCheck(city,citiesRequest[0])
+                            ) {
+                                viewState.setCityReportLogo(true)
+                                cityToSettings(citiesRequest[0])
+                            }
                         }
-                        cities.clear()
-                        cities.addAll(citiesRequest)
-                        viewState.setSpinnerAdapter(cities, fistCall)
+//                        cities.clear()
+//                        cities.addAll(citiesRequest)
+                        //viewState.setSpinnerAdapter(cities, fistCall)
                     }
                     Log.d("my", "cities")
                 },
                 { t -> Log.d("my", t.message.toString()) })
-        return cities
     }
 
-    fun cityToSettings(position: Int) {
-        if (position < cities.size) {
+    private fun cityCheck(city: String, citiesRequest: CitiesRequestModel): Boolean {
+        return citiesRequest.name.toLowerCase().equals(city.toLowerCase()) ||
+                citiesRequest.local_names?.featureName?.toLowerCase().equals(city.toLowerCase()) ||
+                citiesRequest.local_names?.ru?.toLowerCase().equals(city.toLowerCase())
+    }
 
-            with(cities[position]) {
+    fun cityToSettings(citiesRequest: CitiesRequestModel) {
+            with(citiesRequest) {
                 settings.city =
                     if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
                 settings.lat = lat.toString()
                 settings.lon = lon.toString()
             }
-            settings.position = position
-            viewState.setCity(settings.city)
-        }
     }
 
     fun gpsSettingsChange(isChecked: Boolean) {
@@ -86,14 +93,14 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 
     }
 
-    fun goToWeather() {
-        router.newRootScreen(screens.weather())
-    }
-
 
     fun backClick(): Boolean {
         Log.d("my", "settings back")
-        router.exit()
+        if ((settings.city.isEmpty() || settings.lat.isEmpty() || settings.lon.isEmpty()) && !settings.gpsKey) {
+            router.exit()
+        } else {
+            router.newRootScreen(screens.weather())
+        }
         return true
     }
 
