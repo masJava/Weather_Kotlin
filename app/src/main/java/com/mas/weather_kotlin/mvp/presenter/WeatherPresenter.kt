@@ -18,6 +18,7 @@ import com.mas.weather_kotlin.mvp.model.Tools
 import com.mas.weather_kotlin.mvp.model.entity.GpsLocation
 import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
+import com.mas.weather_kotlin.mvp.model.entity.WidgetData
 import com.mas.weather_kotlin.mvp.model.entity.current.CurrentRestModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.model.entity.hourly.HourlyRestModel
@@ -53,6 +54,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
     @Inject
     lateinit var settings: SettingsModel
+
+    @Inject
+    lateinit var widgetData: WidgetData
 
     @field:Named("mainThread")
     @Inject
@@ -283,6 +287,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                             {
                                 if (it != null) {
                                     setWeatherToView(it)
+                                    saveWeatherToWidget(it)
                                 }
                             },
                             { t -> Log.d("my", t.message.toString()) })
@@ -303,6 +308,13 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 //                { t -> Log.d("my", t.message.toString()) })
 
 
+    }
+
+    private fun saveWeatherToWidget(weather: WeatherRequestRestModel) {
+        val prefs =  App.instance.baseContext.getSharedPreferences(Tools().PREFS_NAME, 0).edit()
+        prefs.putInt(Tools().PREF_WIDGET_CURRENT_WEATHER_ICO_KEY, Tools().getIconId(weather.current?.weather?.get(0)?.icon))
+        prefs.putFloat(Tools().PREF_WIDGET_CURRENT_WEATHER_TEMP_KEY, weather.current?.temp!!)
+        prefs.apply()
     }
 
     private fun setWeatherToView(weather: WeatherRequestRestModel) {
@@ -348,6 +360,17 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         daily.forEach { day ->
             val xLabel = day.dt.toStrTime("d.MM", timeZone)
             xAxisText.add(xLabel)
+
+            if (settings.swWind) {
+                dailyWind.add(Entry(num, day.wind_speed.round1()))
+                lAxisMinMax = getMinMaxPair(lAxisMinMax, day.wind_speed.round1())
+            }
+
+            if (settings.swRain) {
+                dailyRain.add(BarEntry(num, day.rain.round1()))
+            }
+            rAxisMinMax =
+                getMinMaxPair(rAxisMinMax, day.rain.round1())
             if (settings.swTemp) {
                 with(day.temp!!) {
                     dailyTemp.add(Entry(num++, this.day.round1()))
@@ -361,16 +384,6 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                     }
                 }
             }
-            if (settings.swWind) {
-                dailyWind.add(Entry(num, day.wind_speed.round1()))
-                lAxisMinMax = getMinMaxPair(lAxisMinMax, day.wind_speed.round1())
-            }
-
-            if (settings.swRain) {
-                dailyRain.add(BarEntry(num, day.rain.round1()))
-            }
-            rAxisMinMax =
-                getMinMaxPair(rAxisMinMax, day.rain.round1())
             if (settings.swWind || (settings.swRain && !settings.swTemp))
                 num++
 
@@ -406,7 +419,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             setColor(colorRed)
             setLineWidth(2.5f)
             setCircleColor(colorRed)
-            setCircleRadius(5f)
+            setCircleHoleColor(colorRed)
+            setCircleRadius(3f)
             setMode(LineDataSet.Mode.HORIZONTAL_BEZIER)
             setDrawValues(true)
             setValueTextSize(11f)
@@ -473,6 +487,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         var press: String
         var update: String
         var weatherIcoId: Int
+        var background: Int?
+        var toolbarColor: Int?
         with(App.instance.resources) {
             temp =
                 "${getString(R.string.wi_thermometer)} %.1f \u00b0C".format(currentWeather.temp.round1())
@@ -505,8 +521,16 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 GregorianCalendar().timeZone.rawOffset / 1000L
             )
 
-//            weatherIcoId = "https://openweathermap.org/img/wn/%s@2x.png".format(currentWeather.weather?.get(0)?.icon)
             weatherIcoId = Tools().getIconId(currentWeather.weather?.get(0)?.icon)
+            background = Tools().getBackgroundGradient(currentWeather.weather?.get(0)?.icon)
+            toolbarColor = Tools().getScrimColor(currentWeather.weather?.get(0)?.icon)
+//           TODO  доделать сохранение в JSON
+        //            widgetData.current.dt = currentWeather.dt
+//            widgetData.current.temp = currentWeather.temp.round1()
+//            widgetData.current.weatherIcoId = weatherIcoId
+//            var gson = Gson()
+//            var json :String = gson.toJson(widgetData)
+//            Log.d("","")
         }
 
 
@@ -520,6 +544,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         viewState.setCurrentSunset(sunset)
         viewState.setCurrentWind(wind)
         viewState.setCurrentWeatherIco(weatherIcoId)
+        viewState.setCurrentBackground(background)
+        viewState.setCurrentToolbarColor(toolbarColor)
     }
 
     fun backClick(): Boolean {

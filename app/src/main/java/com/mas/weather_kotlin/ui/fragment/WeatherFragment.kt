@@ -15,6 +15,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
+import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentWeatherBinding
 import com.mas.weather_kotlin.mvp.presenter.WeatherPresenter
 import com.mas.weather_kotlin.mvp.view.WeatherView
@@ -41,6 +42,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     }
 
     private var vb: FragmentWeatherBinding? = null
+    private var menuTemp = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
@@ -62,6 +64,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
 
         vb?.mainTemp?.typeface = weatherFont
         vb?.mainHum?.typeface = weatherFont
+        vb?.toolbarLayout?.setExpandedTitleTypeface(weatherFont)
         vb?.mainPressure?.typeface = weatherFont
         vb?.mainWindSpeed?.typeface = weatherFont
         vb?.sunrise?.typeface = weatherFont
@@ -70,7 +73,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.appBar?.addOnOffsetChangedListener(OnOffsetChangedListener { appBarLayout, verticalOffset ->
             vb?.swipeRefresh?.isEnabled = verticalOffset == 0
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                vb?.toolbarLayout?.title = presenter.settings.city
+                vb?.toolbarLayout?.title = "${presenter.settings.city} ${menuTemp.drop(2)}"
             } else {
                 vb?.toolbarLayout?.title = ""
             }
@@ -109,18 +112,25 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         xAxis: List<String>,
         lAxisMinMax: Pair<Float, Float>,
         rAxisMinMax: Pair<Float, Float>
-    )
-    {
+    ) {
         with(vb?.chart1!!) {
             description?.text = "Daily weather"
+            val grayColor: Int =
+                context?.resources?.getColor(R.color.scrim_gray, context?.theme) ?: 0
+            description?.textColor = grayColor
 
             this.xAxis.valueFormatter = IndexAxisValueFormatter(xAxis)
             this.xAxis.labelRotationAngle = -45f
+            this.xAxis.textColor = grayColor
 
             axisLeft?.axisMinimum = lAxisMinMax.first
             axisLeft?.axisMaximum = lAxisMinMax.second
+            axisLeft?.textColor = grayColor
             axisRight?.axisMinimum = rAxisMinMax.first
             axisRight?.axisMaximum = rAxisMinMax.second
+            axisRight?.textColor = grayColor
+
+            legend.textColor = grayColor
 
 
             this.data = data
@@ -197,6 +207,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
 
     override fun setCurrentTemp(temp: String) {
         vb?.mainTemp?.text = temp
+        menuTemp = temp
     }
 
     override fun setCurrentHum(hum: String) {
@@ -226,6 +237,22 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     override fun setCurrentWeatherIco(weatherIcoId: Int) {
 //        vb?.mainWeatherIco?.let { GlideImageLoader().load(weatherIcoId, it) }
         vb?.mainWeatherIco?.setImageDrawable(context?.getDrawable(weatherIcoId))
+    }
+
+    override fun setCurrentBackground(background: Int?) {
+        if (background == null) {
+            vb?.toolbarLayout?.background = null
+        } else {
+            vb?.toolbarLayout?.background = context?.getDrawable(background)
+        }
+    }
+
+    override fun setCurrentToolbarColor(toolbarColor: Int?) {
+        if (toolbarColor == null) {
+            vb?.toolbarLayout?.contentScrim = null
+        } else {
+            vb?.toolbarLayout?.contentScrim = context?.getDrawable(toolbarColor)
+        }
     }
 
     override fun hintVisible(visible: Boolean) {

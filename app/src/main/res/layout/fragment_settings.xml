@@ -15,8 +15,7 @@
         android:hint="City"
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_baseline_report_24"
-        app:endIconContentDescription="Fail"
-        >
+        app:endIconContentDescription="Fail">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/city_spinner"

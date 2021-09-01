@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,8 +24,9 @@
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/gradient_yellow"
                 android:fitsSystemWindows="true"
-                app:contentScrim="?attr/colorPrimary"
+                app:contentScrim="@color/cardview_dark_background"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:toolbarId="@+id/toolbar">
@@ -38,17 +38,21 @@
 
                     <TextView
                         android:id="@+id/ti_main_city"
+                        style="@style/FontColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:text="text"
                         android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/lastUpdate"
+                        style="@style/FontColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:gravity="center"
+                        android:text="text"
                         android:textSize="10sp"
                         tools:ignore="SmallSp" />
 
@@ -59,10 +63,12 @@
 
                         <TextView
                             android:id="@+id/sunrise"
+                            style="@style/FontColor"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:text="text"
                             android:textSize="16sp" />
 
                         <ImageView
@@ -73,10 +79,12 @@
 
                         <TextView
                             android:id="@+id/sunset"
+                            style="@style/FontColor"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:text="text"
                             android:textSize="16sp" />
 
                     </LinearLayout>
@@ -88,18 +96,22 @@
 
                         <TextView
                             android:id="@+id/mainTemp"
+                            style="@style/FontColor"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:text="text"
                             android:textSize="20sp" />
 
                         <TextView
                             android:id="@+id/mainHum"
+                            style="@style/FontColor"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:text="text"
                             android:textSize="20sp" />
                     </LinearLayout>
 
@@ -112,17 +124,21 @@
 
                         <TextView
                             android:id="@+id/mainWindSpeed"
+                            style="@style/FontColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:text="text"
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
                         <TextView
                             android:id="@+id/mainPressure"
+                            style="@style/FontColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:text="text"
                             android:textAlignment="center"
                             android:textSize="20sp" />
                     </LinearLayout>
@@ -193,13 +209,14 @@
                     android:layout_height="300dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"/>
+                    android:layout_marginRight="16dp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_daily"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="8dp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     tools:listitem="@layout/day_item" />
             </LinearLayout>

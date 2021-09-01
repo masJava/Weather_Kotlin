@@ -46,7 +46,7 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
         viewState.setCitySpinnerTextChangedListener(settings.gpsKey)
     }
 
-    fun loadCityList(city: String){
+    fun loadCityList(city: String) {
         weather.getCities(city)
             .observeOn(uiScheduler)
             .subscribe(
@@ -56,7 +56,7 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 //                            viewState.showToast("Unknown city")
                             viewState.setCityReportLogo(false)
                         } else {
-                            if (cityCheck(city,citiesRequest[0])
+                            if (cityCheck(city, citiesRequest[0])
                             ) {
                                 viewState.setCityReportLogo(true)
                                 cityToSettings(citiesRequest[0])
@@ -78,12 +78,12 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
     }
 
     fun cityToSettings(citiesRequest: CitiesRequestModel) {
-            with(citiesRequest) {
-                settings.city =
-                    if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
-                settings.lat = lat.toString()
-                settings.lon = lon.toString()
-            }
+        with(citiesRequest) {
+            settings.city =
+                if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
+            settings.lat = lat.toString()
+            settings.lon = lon.toString()
+        }
     }
 
     fun gpsSettingsChange(isChecked: Boolean) {

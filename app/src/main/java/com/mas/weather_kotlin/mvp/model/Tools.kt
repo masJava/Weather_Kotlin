@@ -6,6 +6,11 @@ import java.util.*
 
 class Tools {
 
+    val PREFS_NAME = "com.mas.weather_kotlin.WeatherWidget"
+    val PREF_PREFIX_KEY = "appwidget_"
+    val PREF_WIDGET_CURRENT_WEATHER_ICO_KEY = "weatherWidgetCurrentIco"
+    val PREF_WIDGET_CURRENT_WEATHER_TEMP_KEY = "weatherWidgetCurrentTemp"
+
     val PATTERN_HH_MM = "HH:mm"
     val PATTERN_FULL_DATE_UPD = "yyyy.MM.dd HH:mm:ss"
     val PATTERN_DD_MM = "dd.MM"
@@ -32,15 +37,40 @@ class Tools {
         "50n" -> R.drawable.w50dn
         else -> R.drawable.ic_baseline_error_outline_24
     }
+
+    fun getBackgroundGradient(iconId: String?) = when (iconId)
+    {
+        "01d" -> R.drawable.gradient_yellow
+        "02d" -> R.drawable.gradient_blue
+        "03d", "04d" -> R.drawable.gradient_gray
+        "09d", "10d", "11d","13d","50d" -> R.drawable.gradient_dark_gray
+
+        "01n","02n","03n","04n" -> R.drawable.gradient_gray
+        "09n" ,"10n","11n","13n","50n" -> R.drawable.gradient_dark_gray
+        else -> null
+    }
+
+    fun getScrimColor(iconId: String?) = when (iconId)
+    {
+        "01d" -> R.color.scrim_yellow
+        "02d" -> R.color.scrim_blue
+        "03d", "04d" -> R.color.scrim_gray
+        "09d", "10d", "11d","13d","50d" -> R.color.scrim_dark_gray
+
+        "01n","02n","03n","04n" -> R.color.scrim_gray
+        "09n" ,"10n","11n","13n","50n" -> R.color.scrim_dark_gray
+        else -> null
+    }
+
 }
 
-fun Long.toStrTime(pattern: String?, timeZoneOffset: Long) :String {
-    val calendar: Calendar = GregorianCalendar()
-    val localOffset = calendar.timeZone.rawOffset
-    val targetTimeStamp = this * 1000 - localOffset + timeZoneOffset * 1000
-    val date = Date(targetTimeStamp)
-    val sdf = SimpleDateFormat(pattern, Locale.getDefault())
-    return sdf.format(date)
-}
+    fun Long.toStrTime(pattern: String?, timeZoneOffset: Long): String {
+        val calendar: Calendar = GregorianCalendar()
+        val localOffset = calendar.timeZone.rawOffset
+        val targetTimeStamp = this * 1000 - localOffset + timeZoneOffset * 1000
+        val date = Date(targetTimeStamp)
+        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+        return sdf.format(date)
+    }
 
-fun Float.round1() = Math.round(this * 10) / 10f
+    fun Float.round1() = Math.round(this * 10) / 10f

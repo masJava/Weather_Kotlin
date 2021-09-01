@@ -4,19 +4,37 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name="com.mas.weather_kotlin.ui.App"
+        android:name=".ui.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_weather_icon_png"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_weather_icon_png"
         android:supportsRtl="true"
         android:theme="@style/Theme.Weather.NoActionBar">
-        <activity android:name="com.mas.weather_kotlin.ui.activity.MainActivity">
+        <receiver
+            android:name=".WeatherWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weather_widget_info" />
+        </receiver>
+
+        <activity
+            android:name=".WeatherWidgetConfigureActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

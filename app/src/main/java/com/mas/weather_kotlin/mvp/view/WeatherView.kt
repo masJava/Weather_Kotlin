@@ -19,11 +19,18 @@ interface WeatherView : MvpView {
     fun setCurrentSunset(sunset: String)
     fun setCurrentCityName(cityName: String)
     fun setCurrentWeatherIco(weatherIcoId: Int)
+    fun setCurrentBackground(background: Int?)
+    fun setCurrentToolbarColor(toolbarColor: Int?)
     fun hintVisible(visible: Boolean)
     fun hideSwipeRefresh()
     fun swipeRefreshVisible()
 
     //    fun setChart(dailyTemp: List<Entry>, dailyWind: List<Entry>, xAxis: List<String>, dailyRain: List<BarEntry>)
-    fun setChart(data: CombinedData, xAxis: List<String>, lAxisMinMax:Pair<Float,Float>, rAxisMinMax:Pair<Float,Float>)
+    fun setChart(
+        data: CombinedData,
+        xAxis: List<String>,
+        lAxisMinMax: Pair<Float, Float>,
+        rAxisMinMax: Pair<Float, Float>
+    )
 
 }
