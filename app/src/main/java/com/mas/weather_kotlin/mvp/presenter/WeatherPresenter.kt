@@ -80,9 +80,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             with(App.instance.resources) {
                 if (day.temp != null) {
                     maxT =
-                        getString(R.string.wi_direction_up) + " %.1f\u00b0C".format(day.temp.max.round1())
+                        getString(R.string.wi_day_sunny) + " %.1f\u00b0C".format(day.temp.day.round1())
                     minT =
-                        getString(R.string.wi_direction_down) + " %.1f\u00b0C".format(day.temp.min.round1())
+                        getString(R.string.wi_night_clear) + "  %.1f\u00b0C".format(day.temp.night.round1())
                 }
                 humidity = "${getString(R.string.wi_humidity)} ${day.humidity} %"
                 pressure =
@@ -412,7 +412,6 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         val colorRed = Color.rgb(250, 0, 0)
         val colorWind = Color.rgb(63, 81, 181)
         val colorRain = Color.rgb(0, 181, 212)
-        val colorBlack = Color.rgb(0, 0, 0)
 
         val setTemp = LineDataSet(dailyTemp, "Daily temp").apply {
             axisDependency = YAxis.AxisDependency.LEFT
@@ -433,7 +432,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             setColor(colorWind)
             setLineWidth(2.5f)
             setCircleColor(colorWind)
-            setCircleRadius(5f)
+            setCircleHoleColor(colorWind)
+            setCircleRadius(3f)
             setMode(LineDataSet.Mode.HORIZONTAL_BEZIER)
             setDrawValues(true)
             setValueTextSize(11f)

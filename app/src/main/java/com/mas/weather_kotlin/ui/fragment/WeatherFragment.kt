@@ -122,6 +122,9 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
             this.xAxis.valueFormatter = IndexAxisValueFormatter(xAxis)
             this.xAxis.labelRotationAngle = -45f
             this.xAxis.textColor = grayColor
+            this.xAxis.setLabelCount(xAxis.size+1)
+            this.xAxis.granularity = 1f
+            this.xAxis.setDrawGridLinesBehindData(true)
 
             axisLeft?.axisMinimum = lAxisMinMax.first
             axisLeft?.axisMaximum = lAxisMinMax.second
