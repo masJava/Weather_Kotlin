@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="City"
+        android:hint="@string/settings_city"
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/ic_baseline_report_24"
         app:endIconContentDescription="Fail">
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Use GPS"
+        android:text="@string/settings_use_gps"
         tools:checked="false"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Rain (snow) in percent"
+        android:text="@string/settings_rain_snow_in_percent"
         tools:checked="false"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Snow graph temperature"
+        android:text="@string/settings_snow_graph_temperature"
         tools:checked="false"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Snow graph wind"
+        android:text="@string/settings_snow_graph_wind"
         tools:checked="false"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Snow graph rain"
+        android:text="@string/settings_snow_graph_rain"
         tools:checked="false"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 

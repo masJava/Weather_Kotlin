@@ -3,17 +3,14 @@ package com.mas.weather_kotlin.ui.adapter
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.mas.weather_kotlin.databinding.DayItemCardBinding
-import com.mas.weather_kotlin.mvp.model.image.IImageLoader
 import com.mas.weather_kotlin.mvp.presenter.list.IDailyListPresenter
 import com.mas.weather_kotlin.mvp.view.list.IDailyItemView
 import com.mas.weather_kotlin.ui.App
 
 class DailyRVAdapter(
-    val presenter: IDailyListPresenter,
-    val imageLoader: IImageLoader<ImageView>
+    val presenter: IDailyListPresenter
 ) :
     RecyclerView.Adapter<DailyRVAdapter.ViewHolder>() {
 

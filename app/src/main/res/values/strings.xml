@@ -20,4 +20,14 @@
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
+    <string name="settings_city">City</string>
+    <string name="settings_use_gps">Use GPS</string>
+    <string name="settings_rain_snow_in_percent">Rain (snow) in percent</string>
+    <string name="settings_snow_graph_temperature">Snow graph temperature</string>
+    <string name="settings_snow_graph_wind">Snow graph wind</string>
+    <string name="settings_snow_graph_rain">Snow graph rain</string>
+    <string name="wind_m_s">m/s</string>
+    <string name="weather_updated">Updated: </string>
+    <string name="rain_mm">mm</string>
+    <string name="pressure_mm_Hg">mm Hg</string>
 </resources>

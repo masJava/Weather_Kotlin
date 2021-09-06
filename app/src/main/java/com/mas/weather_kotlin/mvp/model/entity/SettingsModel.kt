@@ -16,4 +16,5 @@ data class SettingsModel(
     var swWind: Boolean = false,
 ) : Parcelable {
 
+    var timeZone: Long = 0L
 }

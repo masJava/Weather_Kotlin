@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentDayInfoBinding
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.presenter.DayInfoPresenter
 import com.mas.weather_kotlin.mvp.view.DayInfoView
 import com.mas.weather_kotlin.ui.App
 import com.mas.weather_kotlin.ui.BackButtonListener
-import com.mas.weather_kotlin.ui.image.GlideImageLoader
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -45,12 +46,30 @@ class DayInfoFragment : MvpAppCompatFragment(), DayInfoView, BackButtonListener 
         }.root
         val weatherFont =
             Typeface.createFromAsset(App.instance.resources.assets, "fonts/weather.ttf")
-        vb?.tvDay?.typeface = weatherFont
-        vb?.tvTempMin?.typeface = weatherFont
-        vb?.tvTempMax?.typeface = weatherFont
-        vb?.tvDailyRain?.typeface = weatherFont
-        vb?.tvDailyHumidity?.typeface = weatherFont
-        vb?.tvDailyPressure?.typeface = weatherFont
+        vb?.sunriseIco?.apply {
+            typeface = weatherFont
+            text = getString(R.string.wi_sunrise)
+        }
+        vb?.sunsetIco?.apply {
+            typeface = weatherFont
+            text = getString(R.string.wi_sunset)
+        }
+        vb?.tvDailyPressureIco?.apply {
+            typeface = weatherFont
+            text = getString(R.string.wi_barometer)
+        }
+        vb?.tvDailyHumidityIco?.apply {
+            typeface = weatherFont
+            text = getString(R.string.wi_humidity)
+        }
+        vb?.tvDailyRainIco?.apply {
+            typeface = weatherFont
+            text = getString(R.string.wi_umbrella)
+        }
+        vb?.tvDailyWindIco?.apply {
+            typeface = weatherFont
+            text = getString(R.string.wi_strong_wind)
+        }
         return fragmentView
     }
 
@@ -70,14 +89,6 @@ class DayInfoFragment : MvpAppCompatFragment(), DayInfoView, BackButtonListener 
         vb?.toolbar?.title = text
     }
 
-    override fun setTempMax(text: String) {
-        vb?.tvTempMax?.text = text
-    }
-
-    override fun setTempMin(text: String) {
-        vb?.tvTempMin?.text = text
-    }
-
     override fun setDailyPressure(text: String) {
         vb?.tvDailyPressure?.text = text
     }
@@ -90,8 +101,44 @@ class DayInfoFragment : MvpAppCompatFragment(), DayInfoView, BackButtonListener 
         vb?.tvDailyRain?.text = text
     }
 
-    override fun loadWeatherIco(url: String) {
-        vb?.ivWeatherIco?.let { GlideImageLoader().load(url, it) }
+    override fun setDailyWind(text: String) {
+        vb?.tvDailyWind?.text = text
     }
 
+    override fun setWeatherIco(id: Int) {
+        context?.let { vb?.ivWeatherIco?.setImageDrawable(ContextCompat.getDrawable(it, id)) }
+    }
+
+    override fun setBackground(background: Int?) {
+        if (background == null) {
+            vb?.llDaily?.background = null
+        } else {
+            context?.let { vb?.llDaily?.background = ContextCompat.getDrawable(it, background) }
+        }
+    }
+
+    override fun setToolbarColor(toolbarColor: Int?) {
+        if (toolbarColor == null) {
+            vb?.toolbar?.background = null
+        } else {
+            context?.let { vb?.toolbar?.background = ContextCompat.getDrawable(it, toolbarColor) }
+        }
+    }
+
+    override fun setSunMoonData(sunrise: String, sunset: String) {
+        vb?.sunriseTime?.text = sunrise
+        vb?.sunsetTime?.text = sunset
+    }
+
+    override fun setTempTable(listTemp: List<String>, listFlTemp: List<String>) {
+        vb?.tempMorning?.text = listTemp[0]
+        vb?.tempDay?.text = listTemp[1]
+        vb?.tempEvening?.text = listTemp[2]
+        vb?.tempNight?.text = listTemp[3]
+
+        vb?.flMorning?.text = listFlTemp[0]
+        vb?.flDay?.text = listFlTemp[1]
+        vb?.flEvening?.text = listFlTemp[2]
+        vb?.flNight?.text = listFlTemp[3]
+    }
 }

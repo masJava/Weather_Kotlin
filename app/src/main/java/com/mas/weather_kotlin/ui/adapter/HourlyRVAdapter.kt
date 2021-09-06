@@ -2,18 +2,13 @@ package com.mas.weather_kotlin.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.mas.weather_kotlin.databinding.HourItemBinding
-import com.mas.weather_kotlin.mvp.model.image.IImageLoader
 import com.mas.weather_kotlin.mvp.presenter.list.IHourlyListPresenter
 import com.mas.weather_kotlin.mvp.view.list.IHourItemView
 import com.mas.weather_kotlin.ui.App
 
-class HourlyRVAdapter(
-    val presenter: IHourlyListPresenter,
-    val imageLoader: IImageLoader<ImageView>
-) :
+class HourlyRVAdapter(val presenter: IHourlyListPresenter) :
     RecyclerView.Adapter<HourlyRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =

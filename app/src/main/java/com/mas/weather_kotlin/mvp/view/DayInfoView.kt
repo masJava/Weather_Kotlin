@@ -8,10 +8,13 @@ import moxy.viewstate.strategy.StateStrategyType
 interface DayInfoView : MvpView {
     fun setDay(text: String)
     fun setTitle(text: String)
-    fun setTempMax(text: String)
-    fun setTempMin(text: String)
+    fun setTempTable(listTemp: List<String>, listFlTemp: List<String>)
     fun setDailyPressure(text: String)
     fun setDailyHumidity(text: String)
     fun setDailyRain(text: String)
-    fun loadWeatherIco(url: String)
+    fun setDailyWind(text: String)
+    fun setWeatherIco(id: Int)
+    fun setBackground(background: Int?)
+    fun setToolbarColor(toolbarColor: Int?)
+    fun setSunMoonData(sunrise: String, sunset: String)
 }

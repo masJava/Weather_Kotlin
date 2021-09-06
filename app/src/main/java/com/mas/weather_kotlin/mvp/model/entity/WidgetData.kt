@@ -7,7 +7,7 @@ data class WidgetData(
         WidgetDataModel(0L, 0f, 0),
         WidgetDataModel(0L, 0f, 0)
     ),
-    val daily: List<WidgetDataModel>  = listOf(
+    val daily: List<WidgetDataModel> = listOf(
         WidgetDataModel(0L, 0f, 0),
         WidgetDataModel(0L, 0f, 0),
         WidgetDataModel(0L, 0f, 0)

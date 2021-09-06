@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Погода</string>
+
+    <string name="PATTERN_HH_MM">HH:mm</string>
+    <string name="PATTERN_FULL_DATE_UPD">yyyy.MM.dd HH:mm:ss</string>
+    <string name="PATTERN_DD_MM">dd.MM</string>
+    <string name="PATTERN_EEE_D_MMM">EEE, d MMM</string>
+
+    <string name="wind_direction_north">С</string>
+    <string name="wind_direction_north_east">СВ</string>
+    <string name="wind_direction_east">В</string>
+    <string name="wind_direction_south_east">ЮВ</string>
+    <string name="wind_direction_south">Ю</string>
+    <string name="wind_direction_south_west">ЮЗ</string>
+    <string name="wind_direction_west">З</string>
+    <string name="wind_direction_north_west">СЗ</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+
+    <string name="settings_city">Город</string>
+    <string name="settings_use_gps">Использовать GPS</string>
+    <string name="settings_rain_snow_in_percent">Вероятность дождя (снега)</string>
+    <string name="settings_snow_graph_temperature">Показывать график температуры</string>
+    <string name="settings_snow_graph_wind">Показывать график ветра</string>
+    <string name="settings_snow_graph_rain">Показывать график дождя</string>
+
+    <string name="wind_m_s">м/с</string>
+    <string name="weather_updated">Обновлено: </string>
+    <string name="rain_mm">мм</string>
+    <string name="pressure_mm_Hg">мм рт. ст.</string>
+</resources>

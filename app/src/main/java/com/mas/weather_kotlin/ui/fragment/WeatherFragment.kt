@@ -23,7 +23,6 @@ import com.mas.weather_kotlin.ui.App
 import com.mas.weather_kotlin.ui.BackButtonListener
 import com.mas.weather_kotlin.ui.adapter.DailyRVAdapter
 import com.mas.weather_kotlin.ui.adapter.HourlyRVAdapter
-import com.mas.weather_kotlin.ui.image.GlideImageLoader
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import kotlin.math.roundToInt
@@ -122,7 +121,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
             this.xAxis.valueFormatter = IndexAxisValueFormatter(xAxis)
             this.xAxis.labelRotationAngle = -45f
             this.xAxis.textColor = grayColor
-            this.xAxis.setLabelCount(xAxis.size+1)
+            this.xAxis.setLabelCount(xAxis.size + 1)
             this.xAxis.granularity = 1f
             this.xAxis.setDrawGridLinesBehindData(true)
 
@@ -178,22 +177,10 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     override fun initRV() {
         vb?.rvHourly?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        vb?.rvHourly?.adapter = HourlyRVAdapter(presenter.hourlyListPresenter, GlideImageLoader())
-//        vb?.rvHourly?.addItemDecoration(
-//            DividerItemDecoration(
-//                requireContext(),
-//                LinearLayoutManager.HORIZONTAL
-//            )
-//        )
+        vb?.rvHourly?.adapter = HourlyRVAdapter(presenter.hourlyListPresenter)
 
         vb?.rvDaily?.layoutManager = LinearLayoutManager(requireContext())
-        vb?.rvDaily?.adapter = DailyRVAdapter(presenter.dailyListPresenter, GlideImageLoader())
-//        vb?.rvDaily?.addItemDecoration(
-//            DividerItemDecoration(
-//                requireContext(),
-//                LinearLayoutManager.VERTICAL
-//            )
-//        )
+        vb?.rvDaily?.adapter = DailyRVAdapter(presenter.dailyListPresenter)
     }
 
     override fun updateDailyList() {
@@ -238,7 +225,6 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     }
 
     override fun setCurrentWeatherIco(weatherIcoId: Int) {
-//        vb?.mainWeatherIco?.let { GlideImageLoader().load(weatherIcoId, it) }
         vb?.mainWeatherIco?.setImageDrawable(context?.getDrawable(weatherIcoId))
     }
 

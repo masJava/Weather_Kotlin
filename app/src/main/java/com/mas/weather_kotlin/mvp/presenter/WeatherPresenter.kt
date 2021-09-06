@@ -86,12 +86,15 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 }
                 humidity = "${getString(R.string.wi_humidity)} ${day.humidity} %"
                 pressure =
-                    "${getString(R.string.wi_barometer)} ${(day.pressure / 1.333).roundToInt()} mm Hg"
+                    "${getString(R.string.wi_barometer)} ${(day.pressure / 1.333).roundToInt()} " + App.instance.getString(
+                        R.string.pressure_mm_Hg
+                    )
 
                 if (percentRain) {
                     rain = "${getString(R.string.wi_umbrella)} ${(day.pop * 100).roundToInt()} % "
                 } else {
-                    rain = "${getString(R.string.wi_umbrella)} %.2f mm".format(day.rain)
+                    rain = "${getString(R.string.wi_umbrella)} %.2f ".format(day.rain) +
+                            App.instance.getString(R.string.rain_mm)
                 }
 
             }
@@ -102,7 +105,6 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             view.setDailyHumidity(humidity)
             view.setDailyPressure(pressure)
             view.setDailyRain(rain)
-//            val weatherIcoId = "https://openweathermap.org/img/wn/%s@2x.png".format(day.weather?.get(0)?.icon)
             val weatherIcoId = Tools().getIconId(day.weather?.get(0)?.icon)
             view.loadWeatherIco(weatherIcoId)
         }
@@ -145,7 +147,6 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     var currentWeather = CurrentRestModel()
     var hourlyListPresenter = HourlyListPresenter()
     var dailyListPresenter = DailyListPresenter()
-    var timeZone = 0L
 
     override fun onFirstViewAttach() {
         parseJson(settings.jsonTxt)
@@ -311,14 +312,17 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     }
 
     private fun saveWeatherToWidget(weather: WeatherRequestRestModel) {
-        val prefs =  App.instance.baseContext.getSharedPreferences(Tools().PREFS_NAME, 0).edit()
-        prefs.putInt(Tools().PREF_WIDGET_CURRENT_WEATHER_ICO_KEY, Tools().getIconId(weather.current?.weather?.get(0)?.icon))
+        val prefs = App.instance.baseContext.getSharedPreferences(Tools().PREFS_NAME, 0).edit()
+        prefs.putInt(
+            Tools().PREF_WIDGET_CURRENT_WEATHER_ICO_KEY,
+            Tools().getIconId(weather.current?.weather?.get(0)?.icon)
+        )
         prefs.putFloat(Tools().PREF_WIDGET_CURRENT_WEATHER_TEMP_KEY, weather.current?.temp!!)
         prefs.apply()
     }
 
     private fun setWeatherToView(weather: WeatherRequestRestModel) {
-        timeZone = weather.timezone_offset
+        settings.timeZone = weather.timezone_offset
         if (weather.current != null) {
             currentWeather = weather.current
             currentWeatherUpdate()
@@ -327,7 +331,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             viewState.hintVisible(true)
             hourlyListPresenter.hourlyWeather.clear()
             hourlyListPresenter.hourlyWeather.addAll(weather.hourly)
-            hourlyListPresenter.timeZone = timeZone
+            hourlyListPresenter.timeZone = settings.timeZone
             hourlyListPresenter.percentRain = settings.percentRain
             viewState.updateHourlyList()
         } else {
@@ -336,7 +340,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         if (weather.daily != null) {
             dailyListPresenter.dailyWeather.clear()
             dailyListPresenter.dailyWeather.addAll(weather.daily)
-            dailyListPresenter.timeZone = timeZone
+            dailyListPresenter.timeZone = settings.timeZone
             dailyListPresenter.percentRain = settings.percentRain
             viewState.updateDailyList()
 
@@ -358,7 +362,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         var rAxisMinMax = Pair(0f, 12f)
 
         daily.forEach { day ->
-            val xLabel = day.dt.toStrTime("d.MM", timeZone)
+            val xLabel = day.dt.toStrTime("d.MM", settings.timeZone)
             xAxisText.add(xLabel)
 
             if (settings.swWind) {
@@ -494,17 +498,18 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 "${getString(R.string.wi_thermometer)} %.1f \u00b0C".format(currentWeather.temp.round1())
             hum = "${getString(R.string.wi_humidity)} ${currentWeather.humidity} %"
             press =
-                "${getString(R.string.wi_barometer)} ${(currentWeather.pressure / 1.333).roundToInt()} mm Hg"
-            wind = "${getString(R.string.wi_strong_wind)} %s %s m/s"
-                .format(
-                    getWindDirection(currentWeather.wind_deg),
+                "${getString(R.string.wi_barometer)} ${(currentWeather.pressure / 1.333).roundToInt()} " +
+                        App.instance.getString(R.string.pressure_mm_Hg)
+            wind =
+                "${getString(R.string.wi_strong_wind)} %s %s ".format(
+                    Tools().getWindDirection(currentWeather.wind_deg),
                     currentWeather.wind_speed.roundToInt()
-                )
+                ) + App.instance.getString(R.string.wind_m_s)
 
             if (currentWeather.sunrise > 0) {
                 sunrise = getString(R.string.wi_sunrise) + " " + currentWeather.sunrise.toStrTime(
                     Tools().PATTERN_HH_MM,
-                    timeZone
+                    settings.timeZone
                 )
             }
 
@@ -512,20 +517,21 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 sunset = getString(R.string.wi_sunset) + " " +
                         currentWeather.sunset.toStrTime(
                             Tools().PATTERN_HH_MM,
-                            timeZone
+                            settings.timeZone
                         )
             }
 
-            update = "Updated: " + currentWeather.dt.toStrTime(
-                Tools().PATTERN_FULL_DATE_UPD,
-                GregorianCalendar().timeZone.rawOffset / 1000L
-            )
+            update =
+                "${App.instance.getString(R.string.weather_updated)} " + currentWeather.dt.toStrTime(
+                    Tools().PATTERN_FULL_DATE_UPD,
+                    GregorianCalendar().timeZone.rawOffset / 1000L
+                )
 
             weatherIcoId = Tools().getIconId(currentWeather.weather?.get(0)?.icon)
             background = Tools().getBackgroundGradient(currentWeather.weather?.get(0)?.icon)
             toolbarColor = Tools().getScrimColor(currentWeather.weather?.get(0)?.icon)
 //           TODO  доделать сохранение в JSON
-        //            widgetData.current.dt = currentWeather.dt
+            //            widgetData.current.dt = currentWeather.dt
 //            widgetData.current.temp = currentWeather.temp.round1()
 //            widgetData.current.weatherIcoId = weatherIcoId
 //            var gson = Gson()
@@ -552,38 +558,6 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         Log.d("my", "weather back")
         router.exit()
         return true
-    }
-
-    fun getWindDirection(deg: Int): String {
-        var dirString: String
-        with(App.instance.resources) {
-            if (deg == 0 || deg == 360) {
-                dirString = getString(R.string.wind_direction_north)
-                dirString += " " + getString(R.string.wi_direction_down)
-            } else if (deg > 0 && deg < 90) {
-                dirString = getString(R.string.wind_direction_north_east)
-                dirString += " " + getString(R.string.wi_direction_down_left)
-            } else if (deg == 90) {
-                dirString = getString(R.string.wind_direction_east)
-                dirString += " " + getString(R.string.wi_direction_left)
-            } else if (deg > 90 && deg < 180) {
-                dirString = getString(R.string.wind_direction_south_east)
-                dirString += " " + getString(R.string.wi_direction_up_left)
-            } else if (deg == 180) {
-                dirString = getString(R.string.wind_direction_south)
-                dirString += " " + getString(R.string.wi_direction_up)
-            } else if (deg > 180 && deg < 270) {
-                dirString = getString(R.string.wind_direction_south_west)
-                dirString += " " + getString(R.string.wi_direction_up_right)
-            } else if (deg == 270) {
-                dirString = getString(R.string.wind_direction_west)
-                dirString += " " + getString(R.string.wi_direction_right)
-            } else {
-                dirString = getString(R.string.wind_direction_north_west)
-                dirString += " " + getString(R.string.wi_direction_down_right)
-            }
-        }
-        return dirString
     }
 
     fun navigateSettings() {
