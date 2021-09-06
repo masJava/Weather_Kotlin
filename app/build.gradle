@@ -71,11 +71,6 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.24'
 
 
-    def room_version = "2.2.6"
-
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-
     implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'

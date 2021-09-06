@@ -14,7 +14,6 @@ import javax.inject.Singleton
     modules = [
         ApiModule::class,
         AppModule::class,
-        CacheModule::class,
         CiceroneModule::class,
         WeatherModule::class
     ]
