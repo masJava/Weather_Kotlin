@@ -4,8 +4,6 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mas.weather_kotlin.mvp.model.api.IDataSource
-import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
-import com.mas.weather_kotlin.mvp.model.entity.WidgetData
 import com.mas.weather_kotlin.mvp.model.network.INetworkStatus
 import com.mas.weather_kotlin.ui.App
 import com.mas.weather_kotlin.ui.network.AndroidNetworkStatus
@@ -44,14 +42,6 @@ class ApiModule {
     @Named("mainThread")
     @Provides
     fun uiScheduler(): Scheduler = AndroidSchedulers.mainThread()
-
-    @Singleton
-    @Provides
-    fun settings(): SettingsModel = SettingsModel()
-
-    @Singleton
-    @Provides
-    fun widgetData(): WidgetData = WidgetData()
 
 //    @Singleton
 //    @Provides

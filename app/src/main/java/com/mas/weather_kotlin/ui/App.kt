@@ -4,11 +4,13 @@ import android.app.Application
 import com.mas.weather_kotlin.di.AppComponent
 import com.mas.weather_kotlin.di.DaggerAppComponent
 import com.mas.weather_kotlin.di.module.AppModule
+import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 
 class App : Application() {
 
     companion object {
         lateinit var instance: App
+        var settings = SettingsModel()
     }
 
     lateinit var appComponent: AppComponent

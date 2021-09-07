@@ -72,15 +72,15 @@ class SettingsFragment : MvpAppCompatFragment(), SettingsView, BackButtonListene
 
         vb?.swGraphWind?.setOnCheckedChangeListener() { _, isChecked ->
             if (isChecked) setGraphSw(!isChecked, isChecked)
-            presenter.settings.swWind = isChecked
+            App.settings.swWind = isChecked
         }
         vb?.swGraphTemp?.setOnCheckedChangeListener() { _, isChecked ->
             if (isChecked) setGraphSw(isChecked, !isChecked)
-            presenter.settings.swTemp = isChecked
+            App.settings.swTemp = isChecked
         }
 
         vb?.swGraphRain?.setOnCheckedChangeListener() { _, isChecked ->
-            presenter.settings.swRain = isChecked
+            App.settings.swRain = isChecked
         }
 
         return view

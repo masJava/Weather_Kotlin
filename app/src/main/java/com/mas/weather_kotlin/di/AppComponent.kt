@@ -1,6 +1,9 @@
 package com.mas.weather_kotlin.di
 
-import com.mas.weather_kotlin.di.module.*
+import com.mas.weather_kotlin.di.module.ApiModule
+import com.mas.weather_kotlin.di.module.AppModule
+import com.mas.weather_kotlin.di.module.CiceroneModule
+import com.mas.weather_kotlin.di.module.WeatherModule
 import com.mas.weather_kotlin.mvp.presenter.DayInfoPresenter
 import com.mas.weather_kotlin.mvp.presenter.MainPresenter
 import com.mas.weather_kotlin.mvp.presenter.SettingsPresenter

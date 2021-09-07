@@ -16,7 +16,7 @@
     <string name="wind_direction_north_west">NW</string>
 
     <string name="action_settings">Settings</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_text">NULL</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>

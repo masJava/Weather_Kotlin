@@ -6,17 +6,29 @@
     android:padding="16dp">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/configure"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:labelFor="@id/appwidget_text"
-        android:text="@string/configure" />
+        />
 
-    <EditText
-        android:id="@+id/appwidget_text"
+    <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/rb_hourly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hourly" />
+
+        <RadioButton
+            android:id="@+id/rb_daily"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Daily" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/add_button"

@@ -12,7 +12,7 @@ class AndroidNetworkStatus(context: Context) : INetworkStatus {
     private val statusSubject: BehaviorSubject<Boolean> = BehaviorSubject.create()
 
     init {
-        statusSubject.onNext(false)
+        statusSubject.onNext(true)
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val request = NetworkRequest.Builder().build()

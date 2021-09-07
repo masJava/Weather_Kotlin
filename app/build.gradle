@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mas.lesson1"
+        applicationId "com.mas.WeatherKotlin"
         minSdkVersion 25
         targetSdkVersion 30
         versionCode 1
@@ -62,14 +62,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
 
-
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    implementation 'org.jetbrains.anko:anko-common:0.10.8'
-
-
     implementation 'com.google.dagger:dagger:2.24'
     kapt 'com.google.dagger:dagger-compiler:2.24'
-
 
     implementation 'com.google.android.gms:play-services-location:18.0.0'
 

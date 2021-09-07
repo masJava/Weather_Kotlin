@@ -12,7 +12,6 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.ActivityMainBinding
-import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.presenter.MainPresenter
 import com.mas.weather_kotlin.mvp.view.MainView
 import com.mas.weather_kotlin.ui.App
@@ -28,9 +27,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
-
-    @Inject
-    lateinit var settings: SettingsModel
 
     lateinit var sharedPref: SharedPreferences
 
@@ -48,7 +44,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb?.root)
 
-        sharedPref = baseContext.getSharedPreferences("WEATHER", Context.MODE_PRIVATE)
+        sharedPref =
+            baseContext.getSharedPreferences(App.instance.packageName, Context.MODE_PRIVATE)
         loadPreferences()
 
 //        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -74,29 +71,29 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     }
 
-    private fun loadPreferences() {
-        settings.city = sharedPref.getString("CITY", "").toString()
-        settings.lat = sharedPref.getString("LAT", "").toString()
-        settings.lon = sharedPref.getString("LON", "").toString()
-        settings.gpsKey = sharedPref.getBoolean("GPSKEY", false)
-        settings.percentRain = sharedPref.getBoolean("PERCENTRAIN", false)
-        settings.swTemp = sharedPref.getBoolean("SWTEMP", false)
-        settings.swWind = sharedPref.getBoolean("SWWIND", false)
-        settings.swRain = sharedPref.getBoolean("SWRAIN", false)
-        settings.jsonTxt = sharedPref.getString("OLDJSON", "").toString()
+    private fun loadPreferences() = with(App.settings) {
+        city = sharedPref.getString("CITY", "").toString()
+        lat = sharedPref.getString("LAT", "").toString()
+        lon = sharedPref.getString("LON", "").toString()
+        gpsKey = sharedPref.getBoolean("GPSKEY", false)
+        percentRain = sharedPref.getBoolean("PERCENTRAIN", false)
+        swTemp = sharedPref.getBoolean("SWTEMP", false)
+        swWind = sharedPref.getBoolean("SWWIND", false)
+        swRain = sharedPref.getBoolean("SWRAIN", false)
+        jsonTxt = sharedPref.getString("OLDJSON", "").toString()
     }
 
-    private fun savePreferences() {
+    private fun savePreferences() = with(App.settings) {
         val editor: SharedPreferences.Editor = sharedPref.edit()
-        editor.putString("CITY", settings.city)
-        editor.putString("LAT", settings.lat)
-        editor.putString("LON", settings.lon)
-        editor.putBoolean("GPSKEY", settings.gpsKey)
-        editor.putBoolean("PERCENTRAIN", settings.percentRain)
-        editor.putBoolean("SWTEMP", settings.swTemp)
-        editor.putBoolean("SWWIND", settings.swWind)
-        editor.putBoolean("SWRAIN", settings.swRain)
-        editor.putString("OLDJSON", settings.jsonTxt)
+        editor.putString("CITY", city)
+        editor.putString("LAT", lat)
+        editor.putString("LON", lon)
+        editor.putBoolean("GPSKEY", gpsKey)
+        editor.putBoolean("PERCENTRAIN", percentRain)
+        editor.putBoolean("SWTEMP", swTemp)
+        editor.putBoolean("SWWIND", swWind)
+        editor.putBoolean("SWRAIN", swRain)
+        editor.putString("OLDJSON", jsonTxt)
         editor.apply()
         Log.d("my", "settings save")
 

@@ -4,7 +4,6 @@ import android.util.Log
 import com.github.terrakok.cicerone.Router
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.mvp.model.Tools
-import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.model.toStrTime
 import com.mas.weather_kotlin.mvp.navigation.IScreens
@@ -26,9 +25,6 @@ class DayInfoPresenter(private val day: DailyRestModel) :
     @Inject
     lateinit var screens: IScreens
 
-    @Inject
-    lateinit var settings: SettingsModel
-
     @field:Named("mainThread")
     @Inject
     lateinit var uiScheduler: Scheduler
@@ -48,7 +44,7 @@ class DayInfoPresenter(private val day: DailyRestModel) :
         pressure =
             "${(day.pressure / 1.333).roundToInt()} " + App.instance.getString(R.string.pressure_mm_Hg)
 
-        if (settings.percentRain) {
+        if (App.settings.percentRain) {
             rain = "${(day.pop * 100).roundToInt()} %"
         } else {
             rain = "%.2f ".format(day.rain) + App.instance.getString(R.string.rain_mm)
@@ -58,8 +54,8 @@ class DayInfoPresenter(private val day: DailyRestModel) :
             "%s %s ".format(Tools().getWindDirection(day.wind_deg), day.wind_speed.roundToInt()) +
                     App.instance.getString(R.string.wind_m_s)
 
-        val sunrise = day.sunrise.toStrTime(Tools().PATTERN_HH_MM, settings.timeZone)
-        val sunset = day.sunset.toStrTime(Tools().PATTERN_HH_MM, settings.timeZone)
+        val sunrise = day.sunrise.toStrTime(Tools().PATTERN_HH_MM, App.settings.timeZone)
+        val sunset = day.sunset.toStrTime(Tools().PATTERN_HH_MM, App.settings.timeZone)
         val pattern: String = "%.1f\u00b0C"
         val arrayTemp = listOf<String>(
             pattern.format(day.temp?.morn),
@@ -75,7 +71,7 @@ class DayInfoPresenter(private val day: DailyRestModel) :
         )
 
         viewState.setDay(time)
-        viewState.setTitle(settings.city)
+        viewState.setTitle(App.settings.city)
         viewState.setTempTable(arrayTemp, arrayFlTemp)
         viewState.setDailyHumidity(humidity)
         viewState.setDailyPressure(pressure)

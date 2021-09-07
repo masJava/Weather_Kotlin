@@ -12,13 +12,10 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.terrakok.cicerone.Router
 import com.google.android.gms.location.*
-import com.google.gson.Gson
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.mvp.model.Tools
 import com.mas.weather_kotlin.mvp.model.entity.GpsLocation
-import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
-import com.mas.weather_kotlin.mvp.model.entity.WidgetData
 import com.mas.weather_kotlin.mvp.model.entity.current.CurrentRestModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.model.entity.hourly.HourlyRestModel
@@ -32,6 +29,7 @@ import com.mas.weather_kotlin.mvp.view.WeatherView
 import com.mas.weather_kotlin.mvp.view.list.IDailyItemView
 import com.mas.weather_kotlin.mvp.view.list.IHourItemView
 import com.mas.weather_kotlin.ui.App
+import com.mas.weather_kotlin.weatherToWidget
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import moxy.MvpPresenter
@@ -51,12 +49,6 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
     @Inject
     lateinit var router: Router
-
-    @Inject
-    lateinit var settings: SettingsModel
-
-    @Inject
-    lateinit var widgetData: WidgetData
 
     @field:Named("mainThread")
     @Inject
@@ -149,7 +141,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     var dailyListPresenter = DailyListPresenter()
 
     override fun onFirstViewAttach() {
-        parseJson(settings.jsonTxt)
+        Tools().parseJson(App.settings.jsonTxt)
             .observeOn(uiScheduler)
             .subscribe(
                 {
@@ -163,7 +155,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
     fun getNewWeather() {
         super.onFirstViewAttach()
-        if (settings.gpsKey) {
+        viewState.swipeRefreshVisible()
+        if (App.settings.gpsKey) {
             getGpsLocation()
         } else {
             loadData()
@@ -203,11 +196,11 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                         "my",
                         "Latitude: " + location.latitude.toString() + " \nLongitude: " + location.longitude.toString()
                     )
-                    settings.lat = location.latitude.toString()
-                    settings.lon = location.longitude.toString()
+                    App.settings.lat = location.latitude.toString()
+                    App.settings.lon = location.longitude.toString()
 
                     loadCityListGPS(location.latitude, location.longitude)
-                    loadData()
+                    // loadData()
 
                     fusedLocationClient.removeLocationUpdates(locationCallback)
                 }
@@ -221,7 +214,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
     }
 
     fun loadCityListGPS(lat: Double, lon: Double) {
-        viewState.setCurrentCityName(settings.city)
+        viewState.setCurrentCityName(App.settings.city)
         viewState.swipeRefreshVisible()
 //        google geo
         geo(lat, lon, 1)
@@ -229,9 +222,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             .subscribe({
                 if (it != null)
                     if (it.count() > 0) {
-                        settings.city = it.get(0).locality
+                        App.settings.city = it.get(0).locality
                         loadData()
-                        viewState.setCurrentCityName(settings.city)
+                        viewState.setCurrentCityName(App.settings.city)
                     }
                 Log.d("myGeo", "googleGeo")
             }, { t ->
@@ -250,11 +243,11 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 { citiesRequest ->
                     if (citiesRequest != null) {
                         if (citiesRequest.count() > 0) {
-                            settings.city = with(citiesRequest[0]) {
+                            App.settings.city = with(citiesRequest[0]) {
                                 if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
                             }
                             loadData()
-                            viewState.setCurrentCityName(settings.city)
+                            viewState.setCurrentCityName(App.settings.city)
                         }
                     }
                     Log.d("myGeo", "openweatherGeo")
@@ -267,28 +260,20 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             Geocoder(App.instance.baseContext).getFromLocation(lat, lon, maxResult)
         }
 
-    fun parseJson(json: String): Single<WeatherRequestRestModel?> =
-        if (json.isNotBlank()) {
-            Single.fromCallable { Gson().fromJson(json, WeatherRequestRestModel::class.java) }
-        } else {
-            Single.fromCallable { null }
-        }
-
-    private fun loadData() {
-        viewState.swipeRefreshVisible()
+    fun loadData() {
         Log.d("my", "LoadData")
-        weather.getJsonStr(settings.lat, settings.lon)
+        weather.getJsonStr(App.settings.lat, App.settings.lon)
             .observeOn(uiScheduler)
             .subscribe(
                 { jsonWeather ->
-                    settings.jsonTxt = jsonWeather.toString()
-                    parseJson(settings.jsonTxt)
+                    App.settings.jsonTxt = jsonWeather.toString()
+                    Tools().parseJson(App.settings.jsonTxt)
                         .observeOn(uiScheduler)
                         .subscribe(
-                            {
-                                if (it != null) {
-                                    setWeatherToView(it)
-                                    saveWeatherToWidget(it)
+                            { weatherRequestRestModel ->
+                                if (weatherRequestRestModel != null) {
+                                    setWeatherToView(weatherRequestRestModel)
+                                    weatherToWidget(weatherRequestRestModel)
                                 }
                             },
                             { t -> Log.d("my", t.message.toString()) })
@@ -296,33 +281,10 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 },
                 { t -> Log.d("my", t.message.toString()) }
             )
-
-//        weather.getWeather(settings.lat, settings.lon)
-//            .observeOn(uiScheduler)
-//            .subscribe(
-//                { weather ->
-//                    if (weather != null) {
-//                        setWeatherToView(weather)
-//                    }
-//                    Log.d("my", "weather")
-//                },
-//                { t -> Log.d("my", t.message.toString()) })
-
-
-    }
-
-    private fun saveWeatherToWidget(weather: WeatherRequestRestModel) {
-        val prefs = App.instance.baseContext.getSharedPreferences(Tools().PREFS_NAME, 0).edit()
-        prefs.putInt(
-            Tools().PREF_WIDGET_CURRENT_WEATHER_ICO_KEY,
-            Tools().getIconId(weather.current?.weather?.get(0)?.icon)
-        )
-        prefs.putFloat(Tools().PREF_WIDGET_CURRENT_WEATHER_TEMP_KEY, weather.current?.temp!!)
-        prefs.apply()
     }
 
     private fun setWeatherToView(weather: WeatherRequestRestModel) {
-        settings.timeZone = weather.timezone_offset
+        App.settings.timeZone = weather.timezone_offset
         if (weather.current != null) {
             currentWeather = weather.current
             currentWeatherUpdate()
@@ -331,8 +293,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             viewState.hintVisible(true)
             hourlyListPresenter.hourlyWeather.clear()
             hourlyListPresenter.hourlyWeather.addAll(weather.hourly)
-            hourlyListPresenter.timeZone = settings.timeZone
-            hourlyListPresenter.percentRain = settings.percentRain
+            hourlyListPresenter.timeZone = App.settings.timeZone
+            hourlyListPresenter.percentRain = App.settings.percentRain
             viewState.updateHourlyList()
         } else {
             viewState.hintVisible(false)
@@ -340,14 +302,12 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         if (weather.daily != null) {
             dailyListPresenter.dailyWeather.clear()
             dailyListPresenter.dailyWeather.addAll(weather.daily)
-            dailyListPresenter.timeZone = settings.timeZone
-            dailyListPresenter.percentRain = settings.percentRain
+            dailyListPresenter.timeZone = App.settings.timeZone
+            dailyListPresenter.percentRain = App.settings.percentRain
             viewState.updateDailyList()
 
             dataToChart(weather.daily)
         }
-
-
         viewState.hideSwipeRefresh()
     }
 
@@ -362,20 +322,20 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         var rAxisMinMax = Pair(0f, 12f)
 
         daily.forEach { day ->
-            val xLabel = day.dt.toStrTime("d.MM", settings.timeZone)
+            val xLabel = day.dt.toStrTime("d.MM", App.settings.timeZone)
             xAxisText.add(xLabel)
 
-            if (settings.swWind) {
+            if (App.settings.swWind) {
                 dailyWind.add(Entry(num, day.wind_speed.round1()))
                 lAxisMinMax = getMinMaxPair(lAxisMinMax, day.wind_speed.round1())
             }
 
-            if (settings.swRain) {
+            if (App.settings.swRain) {
                 dailyRain.add(BarEntry(num, day.rain.round1()))
             }
             rAxisMinMax =
                 getMinMaxPair(rAxisMinMax, day.rain.round1())
-            if (settings.swTemp) {
+            if (App.settings.swTemp) {
                 with(day.temp!!) {
                     dailyTemp.add(Entry(num++, this.day.round1()))
                     xAxisText.add(" ")
@@ -388,7 +348,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                     }
                 }
             }
-            if (settings.swWind || (settings.swRain && !settings.swTemp))
+            if (App.settings.swWind || (App.settings.swRain && !App.settings.swTemp))
                 num++
 
 
@@ -398,10 +358,10 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
 
 //        if (lAxisMinMax.first >= 0)
-        lAxisMinMax = if (settings.swWind) {
+        lAxisMinMax = if (App.settings.swWind) {
             Pair(lAxisMinMax.first, lAxisMinMax.second + 3)
         } else {
-            if (!settings.swTemp) {
+            if (!App.settings.swTemp) {
                 Pair(0f, 0f)
             } else {
                 if (lAxisMinMax.first > 10) {
@@ -461,12 +421,12 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         }
 
         val lineDataSets = ArrayList<ILineDataSet>()
-        if (settings.swTemp) lineDataSets.add(setTemp)
-        if (settings.swWind) lineDataSets.add(setWind)
+        if (App.settings.swTemp) lineDataSets.add(setTemp)
+        if (App.settings.swWind) lineDataSets.add(setWind)
         val lineData = LineData(lineDataSets)
 
         val barDataSets = ArrayList<IBarDataSet>()
-        if (settings.swRain) barDataSets.add(setRain)
+        if (App.settings.swRain) barDataSets.add(setRain)
         val barData = BarData(barDataSets)
 
         data.setData(lineData)
@@ -479,7 +439,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         Pair(Math.min(pair.first, num), Math.max(pair.second, num))
 
     fun showGraph(): Boolean {
-        return settings.swRain || settings.swTemp || settings.swWind
+        return App.settings.swRain || App.settings.swTemp || App.settings.swWind
     }
 
     private fun currentWeatherUpdate() {
@@ -507,17 +467,18 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                 ) + App.instance.getString(R.string.wind_m_s)
 
             if (currentWeather.sunrise > 0) {
-                sunrise = getString(R.string.wi_sunrise) + " " + currentWeather.sunrise.toStrTime(
-                    Tools().PATTERN_HH_MM,
-                    settings.timeZone
-                )
+                sunrise =
+                    getString(R.string.wi_sunrise) + " " + currentWeather.sunrise.toStrTime(
+                        Tools().PATTERN_HH_MM,
+                        App.settings.timeZone
+                    )
             }
 
             if (currentWeather.sunset > 0) {
                 sunset = getString(R.string.wi_sunset) + " " +
                         currentWeather.sunset.toStrTime(
                             Tools().PATTERN_HH_MM,
-                            settings.timeZone
+                            App.settings.timeZone
                         )
             }
 
@@ -530,18 +491,11 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             weatherIcoId = Tools().getIconId(currentWeather.weather?.get(0)?.icon)
             background = Tools().getBackgroundGradient(currentWeather.weather?.get(0)?.icon)
             toolbarColor = Tools().getScrimColor(currentWeather.weather?.get(0)?.icon)
-//           TODO  доделать сохранение в JSON
-            //            widgetData.current.dt = currentWeather.dt
-//            widgetData.current.temp = currentWeather.temp.round1()
-//            widgetData.current.weatherIcoId = weatherIcoId
-//            var gson = Gson()
-//            var json :String = gson.toJson(widgetData)
-//            Log.d("","")
         }
 
 
 
-        if (!settings.gpsKey) viewState.setCurrentCityName(settings.city)
+        if (!App.settings.gpsKey) viewState.setCurrentCityName(App.settings.city)
         viewState.setUpdate(update)
         viewState.setCurrentTemp(temp)
         viewState.setCurrentHum(hum)
@@ -564,12 +518,3 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         router.navigateTo(screens.settings())
     }
 }
-
-//private fun Long.toStrTime(pattern: String?, timeZoneOffset: Long): String {
-//    val calendar: Calendar = GregorianCalendar()
-//    val localOffset = calendar.timeZone.rawOffset
-//    val targetTimeStamp = this * 1000 - localOffset + timeZoneOffset * 1000
-//    val date = Date(targetTimeStamp)
-//    val sdf = SimpleDateFormat(pattern, Locale.getDefault())
-//    return sdf.format(date)
-//}

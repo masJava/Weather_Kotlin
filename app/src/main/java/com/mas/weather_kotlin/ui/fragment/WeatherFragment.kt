@@ -72,7 +72,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.appBar?.addOnOffsetChangedListener(OnOffsetChangedListener { appBarLayout, verticalOffset ->
             vb?.swipeRefresh?.isEnabled = verticalOffset == 0
             if (Math.abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                vb?.toolbarLayout?.title = "${presenter.settings.city} ${menuTemp.drop(2)}"
+                vb?.toolbarLayout?.title = "${App.settings.city} ${menuTemp.drop(2)}"
             } else {
                 vb?.toolbarLayout?.title = ""
             }

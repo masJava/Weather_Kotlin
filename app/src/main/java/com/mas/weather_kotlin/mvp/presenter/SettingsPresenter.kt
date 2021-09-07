@@ -3,10 +3,10 @@ package com.mas.weather_kotlin.mvp.presenter
 import android.util.Log
 import com.github.terrakok.cicerone.Router
 import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
-import com.mas.weather_kotlin.mvp.model.entity.SettingsModel
 import com.mas.weather_kotlin.mvp.navigation.IScreens
 import com.mas.weather_kotlin.mvp.repo.IOpenWeather
 import com.mas.weather_kotlin.mvp.view.SettingsView
+import com.mas.weather_kotlin.ui.App
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -23,8 +23,6 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
     @Inject
     lateinit var screens: IScreens
 
-    @Inject
-    lateinit var settings: SettingsModel
 
 //    @Inject
 //    lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -38,12 +36,12 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         Log.d("my", "Settings")
-        if (settings.city.isNotEmpty())
-            loadCityList(settings.city)
+        if (App.settings.city.isNotEmpty())
+            loadCityList(App.settings.city)
 //        viewState.setSpinnerPosition(settings.position)
-        viewState.setCity(settings.city)
-        viewState.setSwitch(settings)
-        viewState.setCitySpinnerTextChangedListener(settings.gpsKey)
+        viewState.setCity(App.settings.city)
+        viewState.setSwitch(App.settings)
+        viewState.setCitySpinnerTextChangedListener(App.settings.gpsKey)
     }
 
     fun loadCityList(city: String) {
@@ -79,15 +77,15 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 
     fun cityToSettings(citiesRequest: CitiesRequestModel) {
         with(citiesRequest) {
-            settings.city =
+            App.settings.city =
                 if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
-            settings.lat = lat.toString()
-            settings.lon = lon.toString()
+            App.settings.lat = lat.toString()
+            App.settings.lon = lon.toString()
         }
     }
 
     fun gpsSettingsChange(isChecked: Boolean) {
-        settings.gpsKey = isChecked
+        App.settings.gpsKey = isChecked
         viewState.setTiCityEnable(!isChecked)
         viewState.setCitySpinnerTextChangedListener(isChecked)
 
@@ -96,7 +94,7 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
 
     fun backClick(): Boolean {
         Log.d("my", "settings back")
-        if ((settings.city.isEmpty() || settings.lat.isEmpty() || settings.lon.isEmpty()) && !settings.gpsKey) {
+        if ((App.settings.city.isEmpty() || App.settings.lat.isEmpty() || App.settings.lon.isEmpty()) && !App.settings.gpsKey) {
             router.exit()
         } else {
             router.newRootScreen(screens.weather())
@@ -105,6 +103,6 @@ class SettingsPresenter() : MvpPresenter<SettingsView>() {
     }
 
     fun percentSettingsChange(checked: Boolean) {
-        settings.percentRain = checked
+        App.settings.percentRain = checked
     }
 }
