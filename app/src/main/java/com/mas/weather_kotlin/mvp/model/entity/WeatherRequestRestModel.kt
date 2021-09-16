@@ -14,7 +14,7 @@ data class WeatherRequestRestModel(
     @Expose val lon: Float = 0f,
     @Expose val timezone: String = "",
     @Expose val timezone_offset: Long = 0L,
-    @Expose val current: CurrentRestModel? = null,
-    @Expose val hourly: List<HourlyRestModel>? = null,
-    @Expose val daily: List<DailyRestModel>? = null
+    @Expose val current: CurrentRestModel = CurrentRestModel(),
+    @Expose val hourly: List<HourlyRestModel> = emptyList(),
+    @Expose val daily: List<DailyRestModel> = emptyList()
 ) : Parcelable

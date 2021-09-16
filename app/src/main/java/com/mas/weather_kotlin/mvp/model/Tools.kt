@@ -10,18 +10,21 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+internal const val PREF_PREFIX_KEY = "appwidget_"
+internal const val PREF_WIDGET_HOURLY = "HOURLY"
+internal const val PREF_WIDGET_DAILY = "DAILY"
+internal const val PATTERN_HH_MM = "HH:mm"
+internal const val PATTERN_FULL_DATE_UPD = "yyyy.MM.dd HH:mm:ss"
+internal const val PATTERN_DD_MM = "dd.MM"
+internal const val PATTERN_EEE_D_MMM = "EEE, d MMM"
+internal const val PATTERN_EEE_D_MMMM = "EEE, d MMMM"
+internal const val PATTERN_EEE_D = "EEE, d"
+
 class Tools {
 
-    val PREF_PREFIX_KEY = "appwidget_"
-    val PREF_WIDGET_HOURLY = "HOURLY"
-    val PREF_WIDGET_DAILY = "DAILY"
 
-    val PATTERN_HH_MM = "HH:mm"
-    val PATTERN_FULL_DATE_UPD = "yyyy.MM.dd HH:mm:ss"
-    val PATTERN_DD_MM = "dd.MM"
-    val PATTERN_EEE_D_MMM = "EEE, d MMM"
-    val PATTERN_EEE_D_MMMM = "EEE, d MMMM"
-    val PATTERN_EEE_D = "EEE, d"
+
+
 
     fun getIconId(iconId: String?) = when (iconId) {
         "01d" -> R.drawable.w01d
@@ -102,20 +105,20 @@ class Tools {
     fun convertDataToWidget(weather: WeatherRequestRestModel): WidgetData {
         val widgetData = WidgetData()
         with(widgetData.current) {
-            weather.current?.let {
+            weather.current.let {
                 dt = "Current"
-                temp = if (weather.current.temp!! > 0)
+                temp = if (weather.current.temp > 0)
                     "+${weather.current.temp.roundToInt()}"
                 else weather.current.temp.roundToInt().toString()
-                weatherIcoId = Tools().getIconId(weather.current.weather?.get(0)?.icon)
+                weatherIcoId = Tools().getIconId(weather.current.weather.get(0).icon)
             }
-            weather.hourly?.let {
+            weather.hourly.let {
                 for (i in 1..3) {
-                    val time = it[i].dt.toStrTime(Tools().PATTERN_HH_MM, App.settings.timeZone)
+                    val time = it[i].dt.toStrTime(PATTERN_HH_MM, App.settings.timeZone)
                     val temp = if (it[i].temp > 0)
                         "+${it[i].temp.roundToInt()}"
                     else it[i].temp.roundToInt().toString()
-                    val weatherIcoId = Tools().getIconId(it[i].weather?.get(0)?.icon)
+                    val weatherIcoId = Tools().getIconId(it[i].weather.get(0).icon)
                     widgetData.hourly[i - 1].apply {
                         dt = time
                         this.temp = temp
@@ -123,16 +126,16 @@ class Tools {
                     }
                 }
             }
-            weather.daily?.let {
+            weather.daily.let {
                 for (i in 1..3) {
-                    val time = it[i].dt.toStrTime(Tools().PATTERN_EEE_D, App.settings.timeZone)
+                    val time = it[i].dt.toStrTime(PATTERN_EEE_D, App.settings.timeZone)
                     var temp = ""
-                    it[i].temp?.day?.let { day ->
+                    it[i].temp.day.let { day ->
                         temp = if (day > 0)
                             "+${day.roundToInt()}"
                         else day.roundToInt().toString()
                     }
-                    val weatherIcoId = Tools().getIconId(it[i].weather?.get(0)?.icon)
+                    val weatherIcoId = Tools().getIconId(it[i].weather.get(0).icon)
                     widgetData.daily[i - 1].apply {
                         dt = time
                         this.temp = temp
@@ -146,11 +149,11 @@ class Tools {
         return widgetData
     }
 
-    fun parseJson(json: String): Single<WeatherRequestRestModel?> =
+    fun parseJson(json: String): Single<WeatherRequestRestModel> =
         if (json.isNotBlank()) {
             Single.fromCallable { Gson().fromJson(json, WeatherRequestRestModel::class.java) }
         } else {
-            Single.fromCallable { null }
+            Single.fromCallable { WeatherRequestRestModel() }
         }
 
 }

@@ -1,19 +1,27 @@
 package com.mas.weather_kotlin.ui.fragment
 
+import android.graphics.Canvas
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.components.Legend.LegendForm
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.CombinedData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.renderer.XAxisRenderer
+import com.github.mikephil.charting.utils.MPPointF
+import com.github.mikephil.charting.utils.Transformer
+import com.github.mikephil.charting.utils.Utils
+import com.github.mikephil.charting.utils.ViewPortHandler
 import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.mas.weather_kotlin.R
 import com.mas.weather_kotlin.databinding.FragmentWeatherBinding
@@ -26,6 +34,9 @@ import com.mas.weather_kotlin.ui.adapter.HourlyRVAdapter
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import kotlin.math.roundToInt
+
+
+
 
 
 class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener {
@@ -68,6 +79,8 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.mainWindSpeed?.typeface = weatherFont
         vb?.sunrise?.typeface = weatherFont
         vb?.sunset?.typeface = weatherFont
+        vb?.mainRain?.typeface = weatherFont
+        vb?.mainSnow?.typeface = weatherFont
 
         vb?.appBar?.addOnOffsetChangedListener(OnOffsetChangedListener { appBarLayout, verticalOffset ->
             vb?.swipeRefresh?.isEnabled = verticalOffset == 0
@@ -119,11 +132,20 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
             description?.textColor = grayColor
 
             this.xAxis.valueFormatter = IndexAxisValueFormatter(xAxis)
-            this.xAxis.labelRotationAngle = -45f
+//            this.xAxis.labelRotationAngle = -45f
             this.xAxis.textColor = grayColor
             this.xAxis.setLabelCount(xAxis.size + 1)
             this.xAxis.granularity = 1f
             this.xAxis.setDrawGridLinesBehindData(true)
+            this.xAxis.position = XAxis.XAxisPosition.TOP
+            setXAxisRenderer(
+                CustomXAxisRenderer(
+                    getViewPortHandler(),
+                    getXAxis(),
+                    getTransformer(YAxis.AxisDependency.LEFT)
+                )
+            )
+            setExtraOffsets(0f,15f,0f,0f)
 
             axisLeft?.axisMinimum = lAxisMinMax.first
             axisLeft?.axisMaximum = lAxisMinMax.second
@@ -208,6 +230,22 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         vb?.mainWindSpeed?.text = wind
     }
 
+    override fun setCurrentRain(rain: String) {
+        vb?.mainRain?.visibility = when (rain.isBlank()) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+        vb?.mainRain?.text = rain
+    }
+
+    override fun setCurrentSnow(snow: String) {
+        vb?.mainSnow?.visibility = when (snow.isBlank()) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+        vb?.mainSnow?.text = snow
+    }
+
     override fun setCurrentPress(press: String) {
         vb?.mainPressure?.text = press
     }
@@ -225,7 +263,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
     }
 
     override fun setCurrentWeatherIco(weatherIcoId: Int) {
-        vb?.mainWeatherIco?.setImageDrawable(context?.getDrawable(weatherIcoId))
+        vb?.mainWeatherIco?.setImageDrawable(ContextCompat.getDrawable(App.instance.baseContext,weatherIcoId))
     }
 
     override fun setCurrentBackground(background: Int?) {
@@ -240,7 +278,7 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
         if (toolbarColor == null) {
             vb?.toolbarLayout?.contentScrim = null
         } else {
-            vb?.toolbarLayout?.contentScrim = context?.getDrawable(toolbarColor)
+            vb?.toolbarLayout?.contentScrim = ContextCompat.getDrawable(App.instance.baseContext,toolbarColor)
         }
     }
 
@@ -254,4 +292,26 @@ class WeatherFragment : MvpAppCompatFragment(), WeatherView, BackButtonListener 
 
     override fun backPressed() = presenter.backClick()
 
+}
+
+class CustomXAxisRenderer(viewPortHandler: ViewPortHandler?, xAxis: XAxis?, trans: Transformer?) :
+    XAxisRenderer(viewPortHandler, xAxis, trans) {
+    override fun drawLabel(
+        c: Canvas?,
+        formattedLabel: String,
+        x: Float,
+        y: Float,
+        anchor: MPPointF?,
+        angleDegrees: Float
+    ) {
+        val line = formattedLabel.split("\n").toTypedArray()
+        val dopY = y-mAxisLabelPaint.textSize
+        Utils.drawXAxisValue(c, line[0], x, dopY, mAxisLabelPaint, anchor, angleDegrees)
+        for (i in 1 until line.size) { // we've already processed 1st line
+            Utils.drawXAxisValue(
+                c, line[i], x, dopY + mAxisLabelPaint.textSize * i,
+                mAxisLabelPaint, anchor, angleDegrees
+            )
+        }
+    }
 }

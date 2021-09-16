@@ -13,8 +13,8 @@ data class DailyRestModel(
     @Expose val moonrise: Long = 0L,
     @Expose val moonset: Long = 0L,
     @Expose val moon_phase: Float = 0f,
-    @Expose val temp: Temp? = null,
-    @Expose val feels_like: Feels_like? = null,
+    @Expose val temp: Temp = Temp(),
+    @Expose val feels_like: Feels_like = Feels_like(),
     @Expose val pressure: Int = 0,
     @Expose val humidity: Int = 0,
     @Expose val dew_point: Float = 0f,
@@ -24,6 +24,6 @@ data class DailyRestModel(
     @Expose val rain: Float = 0f,
     @Expose val snow: Float = 0f,
     @Expose val wind_deg: Int = 0,
-    @Expose val weather: List<WeatherRestModel>? = null,
+    @Expose val weather: List<WeatherRestModel> = emptyList(),
     @Expose val pop: Float = 0f
 ) : Parcelable

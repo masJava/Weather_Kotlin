@@ -21,7 +21,7 @@ data class CurrentRestModel(
     @Expose val clouds: Int = 0,
     @Expose val wind_speed: Float = 0f,
     @Expose val wind_deg: Int = 0,
-    @Expose val weather: List<WeatherRestModel?>? = null,
-    @Expose val rain: Rain? = null,
-    @Expose val snow: Snow? = null
+    @Expose val weather: List<WeatherRestModel> = emptyList(),
+    @Expose val rain: Rain = Rain(),
+    @Expose val snow: Snow = Snow()
 ) : Parcelable

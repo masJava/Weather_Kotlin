@@ -10,5 +10,5 @@ data class CitiesRequestModel(
     @Expose val lat: Float = 0f,
     @Expose val lon: Float = 0f,
     @Expose val country: String = "",
-    @Expose val local_names: LocalNames? = null,
+    @Expose val local_names: LocalNames = LocalNames(),
 ) : Parcelable

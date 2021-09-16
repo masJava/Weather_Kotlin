@@ -13,14 +13,12 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.terrakok.cicerone.Router
 import com.google.android.gms.location.*
 import com.mas.weather_kotlin.R
-import com.mas.weather_kotlin.mvp.model.Tools
+import com.mas.weather_kotlin.mvp.model.*
 import com.mas.weather_kotlin.mvp.model.entity.GpsLocation
 import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
 import com.mas.weather_kotlin.mvp.model.entity.current.CurrentRestModel
 import com.mas.weather_kotlin.mvp.model.entity.daily.DailyRestModel
 import com.mas.weather_kotlin.mvp.model.entity.hourly.HourlyRestModel
-import com.mas.weather_kotlin.mvp.model.round1
-import com.mas.weather_kotlin.mvp.model.toStrTime
 import com.mas.weather_kotlin.mvp.navigation.IScreens
 import com.mas.weather_kotlin.mvp.presenter.list.IDailyListPresenter
 import com.mas.weather_kotlin.mvp.presenter.list.IHourlyListPresenter
@@ -63,19 +61,17 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
         override fun bindView(view: IDailyItemView) {
             val day = dailyWeather[view.pos]
-            val time = day.dt.toStrTime(Tools().PATTERN_EEE_D_MMM, timeZone)
-            var maxT = ""
-            var minT = ""
+            val time = day.dt.toStrTime(PATTERN_EEE_D_MMM, timeZone)
+            var maxT: String
+            var minT: String
             var humidity: String
             var pressure: String
-            var rain: String
+            var rain = ""
             with(App.instance.resources) {
-                if (day.temp != null) {
-                    maxT =
-                        getString(R.string.wi_day_sunny) + " %.1f\u00b0C".format(day.temp.day.round1())
-                    minT =
-                        getString(R.string.wi_night_clear) + "  %.1f\u00b0C".format(day.temp.night.round1())
-                }
+                maxT =
+                    getString(R.string.wi_day_sunny) + " %.1f\u00b0C".format(day.temp.day.round1())
+                minT =
+                    " ${getString(R.string.wi_night_clear)} %.1f\u00b0C".format(day.temp.night.round1())
                 humidity = "${getString(R.string.wi_humidity)} ${day.humidity} %"
                 pressure =
                     "${getString(R.string.wi_barometer)} ${(day.pressure / 1.333).roundToInt()} " + App.instance.getString(
@@ -83,10 +79,13 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                     )
 
                 if (percentRain) {
-                    rain = "${getString(R.string.wi_umbrella)} ${(day.pop * 100).roundToInt()} % "
+                    if (day.pop > 0) rain =
+                        "${getString(R.string.wi_umbrella)} ${(day.pop * 100).roundToInt()} % "
                 } else {
-                    rain = "${getString(R.string.wi_umbrella)} %.2f ".format(day.rain) +
-                            App.instance.getString(R.string.rain_mm)
+                    val rainfall = day.rain + day.snow
+                    if (rainfall > 0) rain =
+                        "${getString(R.string.wi_umbrella)} %.2f ".format(rainfall) +
+                                App.instance.getString(R.string.rain_mm)
                 }
 
             }
@@ -97,7 +96,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             view.setDailyHumidity(humidity)
             view.setDailyPressure(pressure)
             view.setDailyRain(rain)
-            val weatherIcoId = Tools().getIconId(day.weather?.get(0)?.icon)
+            val weatherIcoId = Tools().getIconId(day.weather.get(0).icon)
             view.loadWeatherIco(weatherIcoId)
         }
 
@@ -112,24 +111,29 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
         override fun bindView(view: IHourItemView) {
             val hour = hourlyWeather[view.pos]
-            var time = hour.dt.toStrTime(Tools().PATTERN_HH_MM, timeZone)
+            var time = hour.dt.toStrTime(PATTERN_HH_MM, timeZone)
             if (time.equals("00:00")) {
-                time = hour.dt.toStrTime(Tools().PATTERN_DD_MM, timeZone) + "\n" + time
+                time = hour.dt.toStrTime(PATTERN_DD_MM, timeZone) + "\n" + time
             } else time = "\n" + time
             view.setHour(time)
 
-            val rain = if (percentRain) {
-                if (hour.rain != null) "${(hour.pop * 100).roundToInt()}%" else ""
+            var rain = ""
+            if (percentRain) {
+                if (hour.pop > 0) {
+                    rain = "${(hour.pop * 100).roundToInt()}%"
+                }
             } else {
-                if (hour.rain != null) hour.rain.rain.toString() else ""
+                val rainfall = hour.rain.rain + hour.snow.snow
+                if (rainfall > 0) {
+                    rain = "%.1f".format(rainfall.round1())
+                }
             }
 
             view.setRainfall(rain)
 
             view.setTemp("%.1f".format(hour.temp.round1()))
 
-//            val weatherIcoUrl = "https://openweathermap.org/img/wn/%s@2x.png".format(hour.weather?.get(0)?.icon)
-            val weatherIcoId = Tools().getIconId(hour.weather?.get(0)?.icon)
+            val weatherIcoId = Tools().getIconId(hour.weather.get(0).icon)
             view.loadWeatherIco(weatherIcoId)
         }
 
@@ -145,7 +149,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             .observeOn(uiScheduler)
             .subscribe(
                 {
-                    if (it != null) {
+                    if (it != WeatherRequestRestModel()) {
                         setWeatherToView(it)
                     }
                 },
@@ -217,15 +221,14 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         viewState.setCurrentCityName(App.settings.city)
         viewState.swipeRefreshVisible()
 //        google geo
-        geo(lat, lon, 1)
+        geo(lat, lon)
             .observeOn(uiScheduler)
             .subscribe({
-                if (it != null)
-                    if (it.count() > 0) {
-                        App.settings.city = it.get(0).locality
-                        loadData()
-                        viewState.setCurrentCityName(App.settings.city)
-                    }
+                if (it.count() > 0) {
+                    App.settings.city = it.get(0).locality
+                    loadData()
+                    viewState.setCurrentCityName(App.settings.city)
+                }
                 Log.d("myGeo", "googleGeo")
             }, { t ->
                 Log.d("myGeo", t.message.toString())
@@ -241,23 +244,21 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             .observeOn(uiScheduler)
             .subscribe(
                 { citiesRequest ->
-                    if (citiesRequest != null) {
-                        if (citiesRequest.count() > 0) {
-                            App.settings.city = with(citiesRequest[0]) {
-                                if (local_names?.ru == "") local_names.featureName else local_names?.ru.toString()
-                            }
-                            loadData()
-                            viewState.setCurrentCityName(App.settings.city)
+                    if (citiesRequest.count() > 0) {
+                        App.settings.city = with(citiesRequest[0]) {
+                            if (local_names.ru == "") local_names.featureName else local_names.ru.toString()
                         }
+                        loadData()
+                        viewState.setCurrentCityName(App.settings.city)
                     }
                     Log.d("myGeo", "openweatherGeo")
                 },
                 { t -> Log.d("my", t.message.toString()) })
     }
 
-    private fun geo(lat: Double, lon: Double, maxResult: Int) =
+    private fun geo(lat: Double, lon: Double) =
         Single.fromCallable {
-            Geocoder(App.instance.baseContext).getFromLocation(lat, lon, maxResult)
+            Geocoder(App.instance.baseContext).getFromLocation(lat, lon, 1)
         }
 
     fun loadData() {
@@ -271,7 +272,7 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                         .observeOn(uiScheduler)
                         .subscribe(
                             { weatherRequestRestModel ->
-                                if (weatherRequestRestModel != null) {
+                                if (weatherRequestRestModel != WeatherRequestRestModel()) {
                                     setWeatherToView(weatherRequestRestModel)
                                     weatherToWidget(weatherRequestRestModel)
                                 }
@@ -285,29 +286,21 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
 
     private fun setWeatherToView(weather: WeatherRequestRestModel) {
         App.settings.timeZone = weather.timezone_offset
-        if (weather.current != null) {
-            currentWeather = weather.current
-            currentWeatherUpdate()
-        }
-        if (weather.hourly != null) {
-            viewState.hintVisible(true)
-            hourlyListPresenter.hourlyWeather.clear()
-            hourlyListPresenter.hourlyWeather.addAll(weather.hourly)
-            hourlyListPresenter.timeZone = App.settings.timeZone
-            hourlyListPresenter.percentRain = App.settings.percentRain
-            viewState.updateHourlyList()
-        } else {
-            viewState.hintVisible(false)
-        }
-        if (weather.daily != null) {
-            dailyListPresenter.dailyWeather.clear()
-            dailyListPresenter.dailyWeather.addAll(weather.daily)
-            dailyListPresenter.timeZone = App.settings.timeZone
-            dailyListPresenter.percentRain = App.settings.percentRain
-            viewState.updateDailyList()
+        currentWeather = weather.current
+        currentWeatherUpdate()
+        viewState.hintVisible(true)
+        hourlyListPresenter.hourlyWeather.clear()
+        hourlyListPresenter.hourlyWeather.addAll(weather.hourly)
+        hourlyListPresenter.timeZone = App.settings.timeZone
+        hourlyListPresenter.percentRain = App.settings.percentRain
+        viewState.updateHourlyList()
+        dailyListPresenter.dailyWeather.clear()
+        dailyListPresenter.dailyWeather.addAll(weather.daily)
+        dailyListPresenter.timeZone = App.settings.timeZone
+        dailyListPresenter.percentRain = App.settings.percentRain
+        viewState.updateDailyList()
 
-            dataToChart(weather.daily)
-        }
+        dataToChart(weather.daily)
         viewState.hideSwipeRefresh()
     }
 
@@ -322,7 +315,9 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         var rAxisMinMax = Pair(0f, 12f)
 
         daily.forEach { day ->
-            val xLabel = day.dt.toStrTime("d.MM", App.settings.timeZone)
+            val xLabel =
+                day.dt.toStrTime("EEE", App.settings.timeZone) + "\n" +
+                    day.dt.toStrTime("d.MM", App.settings.timeZone)
             xAxisText.add(xLabel)
 
             if (App.settings.swWind) {
@@ -331,12 +326,12 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             }
 
             if (App.settings.swRain) {
-                dailyRain.add(BarEntry(num, day.rain.round1()))
+                dailyRain.add(BarEntry(num, day.rain.round1() + day.snow.round1()))
             }
             rAxisMinMax =
-                getMinMaxPair(rAxisMinMax, day.rain.round1())
+                getMinMaxPair(rAxisMinMax, day.rain.round1() + day.snow.round1())
             if (App.settings.swTemp) {
-                with(day.temp!!) {
+                with(day.temp) {
                     dailyTemp.add(Entry(num++, this.day.round1()))
                     xAxisText.add(" ")
                     dailyTemp.add(Entry(num++, night.round1()))
@@ -450,6 +445,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         var wind: String
         var press: String
         var update: String
+        var rain = ""
+        var snow = ""
         var weatherIcoId: Int
         var background: Int?
         var toolbarColor: Int?
@@ -465,11 +462,24 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
                     Tools().getWindDirection(currentWeather.wind_deg),
                     currentWeather.wind_speed.roundToInt()
                 ) + App.instance.getString(R.string.wind_m_s)
+            if (currentWeather.rain.rain > 0) {
+                rain =
+                    "${getString(R.string.wi_umbrella)} %.1f ".format(
+                        currentWeather.rain.rain.round1()
+                    ) + App.instance.getString(R.string.rain_mm)
+            }
+            if (currentWeather.snow.snow > 0) {
+                snow =
+                    "${getString(R.string.wi_snow)} %.1f ".format(
+                        currentWeather.snow.snow.round1()
+                    ) + App.instance.getString(R.string.rain_mm)
+            }
+
 
             if (currentWeather.sunrise > 0) {
                 sunrise =
                     getString(R.string.wi_sunrise) + " " + currentWeather.sunrise.toStrTime(
-                        Tools().PATTERN_HH_MM,
+                        PATTERN_HH_MM,
                         App.settings.timeZone
                     )
             }
@@ -477,20 +487,20 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
             if (currentWeather.sunset > 0) {
                 sunset = getString(R.string.wi_sunset) + " " +
                         currentWeather.sunset.toStrTime(
-                            Tools().PATTERN_HH_MM,
+                            PATTERN_HH_MM,
                             App.settings.timeZone
                         )
             }
 
             update =
                 "${App.instance.getString(R.string.weather_updated)} " + currentWeather.dt.toStrTime(
-                    Tools().PATTERN_FULL_DATE_UPD,
+                    PATTERN_FULL_DATE_UPD,
                     GregorianCalendar().timeZone.rawOffset / 1000L
                 )
 
-            weatherIcoId = Tools().getIconId(currentWeather.weather?.get(0)?.icon)
-            background = Tools().getBackgroundGradient(currentWeather.weather?.get(0)?.icon)
-            toolbarColor = Tools().getScrimColor(currentWeather.weather?.get(0)?.icon)
+            weatherIcoId = Tools().getIconId(currentWeather.weather.get(0).icon)
+            background = Tools().getBackgroundGradient(currentWeather.weather.get(0).icon)
+            toolbarColor = Tools().getScrimColor(currentWeather.weather.get(0).icon)
         }
 
 
@@ -503,6 +513,8 @@ class WeatherPresenter() : MvpPresenter<WeatherView>() {
         viewState.setCurrentSunrise(sunrise)
         viewState.setCurrentSunset(sunset)
         viewState.setCurrentWind(wind)
+        viewState.setCurrentRain(rain)
+        viewState.setCurrentSnow(snow)
         viewState.setCurrentWeatherIco(weatherIcoId)
         viewState.setCurrentBackground(background)
         viewState.setCurrentToolbarColor(toolbarColor)

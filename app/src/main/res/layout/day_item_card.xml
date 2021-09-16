@@ -26,8 +26,7 @@
             <TextView
                 android:id="@+id/tv_day"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="text" />
+                android:layout_height="match_parent"/>
         </GridLayout>
 
         <GridLayout
@@ -39,7 +38,8 @@
             <ImageView
                 android:id="@+id/iv_dayImage"
                 android:layout_width="40dp"
-                android:layout_height="40dp" />
+                android:layout_height="40dp"
+                android:contentDescription="@string/weather_icon_description" />
         </GridLayout>
 
         <GridLayout
@@ -51,14 +51,12 @@
             <TextView
                 android:id="@+id/tv_tempMax"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="text" />
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/tv_tempMin"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="text" />
+                android:layout_height="wrap_content"/>
 
         </GridLayout>
 
@@ -70,20 +68,17 @@
             <TextView
                 android:id="@+id/tv_dailyPressure"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="text" />
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/tv_dailyHumidity"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="text" />
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/tv_dailyRain"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="text" />
+                android:layout_height="wrap_content"/>
         </GridLayout>
 
     </GridLayout>

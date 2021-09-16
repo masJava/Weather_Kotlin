@@ -9,10 +9,9 @@ import android.util.Log
 import android.widget.RemoteViews
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
-import com.mas.weather_kotlin.mvp.model.Tools
+import com.mas.weather_kotlin.mvp.model.*
 import com.mas.weather_kotlin.mvp.model.api.IDataSource
 import com.mas.weather_kotlin.mvp.model.entity.WeatherRequestRestModel
-import com.mas.weather_kotlin.mvp.model.toStrTime
 import com.mas.weather_kotlin.mvp.repo.RetrofitWeather
 import com.mas.weather_kotlin.ui.App
 import com.mas.weather_kotlin.ui.network.AndroidNetworkStatus
@@ -35,7 +34,7 @@ class WeatherWidget : AppWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             val widgetType = loadWidgetType(context, appWidgetId)
-            if (widgetType.equals(Tools().PREF_WIDGET_DAILY) || widgetType.equals(Tools().PREF_WIDGET_HOURLY)) {
+            if (widgetType.equals(PREF_WIDGET_DAILY) || widgetType.equals(PREF_WIDGET_HOURLY)) {
                 loadData()
             }
         }
@@ -93,10 +92,8 @@ internal fun loadData() {
                     .observeOn(uiScheduler)
                     .subscribe(
                         {
-                            if (it != null) {
-                                Log.d("my", "LoadData widget success")
-                                weatherToWidget(it)
-                            }
+                            Log.d("my", "LoadData widget success")
+                            weatherToWidget(it)
                         },
                         { t -> Log.d("my", t.message.toString() + " parseJson") })
 //                    Log.d("my", jsonWeather.toString())
@@ -122,12 +119,12 @@ internal fun weatherToWidget(weather: WeatherRequestRestModel) {
             setTextViewText(R.id.tv_city, App.settings.city)
             setTextViewText(
                 R.id.tv_update,
-                weather.current?.dt?.toStrTime(Tools().PATTERN_HH_MM, App.settings.timeZone)
+                weather.current.dt.toStrTime(PATTERN_HH_MM, App.settings.timeZone)
             )
             setImageViewResource(R.id.iv_currentImg, widgetData.current.weatherIcoId)
         }
 
-        if (widgetType.equals(Tools().PREF_WIDGET_HOURLY)) {
+        if (widgetType.equals(PREF_WIDGET_HOURLY)) {
             with(widgetView) {
                 var num = 0
                 setTextViewText(R.id.tv_firstTime, widgetData.hourly[num].dt)
@@ -144,7 +141,7 @@ internal fun weatherToWidget(weather: WeatherRequestRestModel) {
             }
         }
 
-        if (loadWidgetType(context, id).equals(Tools().PREF_WIDGET_DAILY)) {
+        if (loadWidgetType(context, id).equals(PREF_WIDGET_DAILY)) {
             with(widgetView) {
                 var num = 0
                 setTextViewText(R.id.tv_firstTime, widgetData.daily[num].dt)

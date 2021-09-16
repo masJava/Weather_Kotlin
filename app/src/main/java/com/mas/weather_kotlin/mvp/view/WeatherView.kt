@@ -14,6 +14,8 @@ interface WeatherView : MvpView {
     fun setCurrentTemp(temp: String)
     fun setCurrentHum(hum: String)
     fun setCurrentWind(wind: String)
+    fun setCurrentRain(rain: String)
+    fun setCurrentSnow(snow: String)
     fun setCurrentPress(press: String)
     fun setCurrentSunrise(sunrise: String)
     fun setCurrentSunset(sunset: String)

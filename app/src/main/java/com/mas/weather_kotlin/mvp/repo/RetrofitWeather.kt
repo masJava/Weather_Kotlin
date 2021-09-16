@@ -1,5 +1,6 @@
 package com.mas.weather_kotlin.mvp.repo
 
+import com.google.gson.JsonObject
 import com.mas.weather_kotlin.BuildConfig
 import com.mas.weather_kotlin.mvp.model.api.IDataSource
 import com.mas.weather_kotlin.mvp.model.entity.CitiesRequestModel
@@ -24,7 +25,8 @@ class RetrofitWeather(
                     Single.fromCallable { it }
                 }
             } else {
-                Single.fromCallable { null }
+//                TODO empty JsonObject
+                Single.fromCallable {JsonObject() }
             }
         }.subscribeOn(Schedulers.io())
 

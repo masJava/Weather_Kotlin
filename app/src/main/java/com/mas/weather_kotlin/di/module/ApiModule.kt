@@ -29,7 +29,7 @@ class ApiModule {
     @Singleton
     @Provides
     fun api(gson: Gson): IDataSource = Retrofit.Builder()
-        .baseUrl("https://api.openweathermap.org/")
+        .baseUrl(BASE_URL)
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
@@ -51,6 +51,8 @@ class ApiModule {
 //    @Singleton
 //    @Provides
 //    fun gpsLocation(app: App): IGPSLocation = AndroidGPSLocation(app)
-
+companion object {
+    private const val BASE_URL = "https://api.openweathermap.org/"
+}
 
 }

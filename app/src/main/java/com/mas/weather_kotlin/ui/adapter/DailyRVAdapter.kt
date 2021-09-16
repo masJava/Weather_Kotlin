@@ -2,6 +2,7 @@ package com.mas.weather_kotlin.ui.adapter
 
 import android.graphics.Typeface
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mas.weather_kotlin.databinding.DayItemCardBinding
@@ -64,6 +65,11 @@ class DailyRVAdapter(
 
         override fun setDailyRain(text: String) = with(vb) {
             tvDailyRain.typeface = weatherFont
+            if (text.isBlank()) {
+                tvDailyRain.visibility = View.GONE
+            } else {
+                tvDailyRain.visibility = View.VISIBLE
+            }
             tvDailyRain.text = text
         }
 
